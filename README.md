@@ -41,9 +41,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 4. mdx词典文件：这个步骤是可选项，但一步到位可以极大提升用户的体验，更重要的是使用这个工具可以实现跨平台制作mdx词典了，不必局限于Windows，Linux、Mac统统不在话下。当然要说明的是，这一环节用到了另一个开源工具， https://github.com/liuyug/mdict-utils ，功劳统统属于他！
 
-## 使用方法
-
-### 程序文件及安装
+## 程序文件及安装
 
 根本谈不上安装，因为整个程序就是3个Vim脚本文件而已，下载后，直接将这些脚本文件放在与词条文件同一个目录即可。
 
@@ -51,7 +49,22 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 * MdxSourceBuilderCore.vim  这是主程序调用的程序，仅当需要高级定制时修改，通常无需理会
 * MdxSourceBuilderCSS.vim  这是CSS文件，样式文件可以在这里定义，通常无需理会
 
-若有其他文件，都是附带的readme, demo之类，可以尽情删除。
+若有其他文件，都是附带的readme, 案例文件之类，可以尽情删除。
+
+## 体验案例“火星词典”
+
+为展示程序的特点，特制作了“火星词典”，供观摩使用。
+
+* 案例词条文件：以"火星词典"开头的所有.txt和.html文件，其中body.part1、body.part2、Pinyin三个文件展示了不同的词条格式
+* 程序及词典配置文件：以"MdxSourceBuilder"开头的所有.vim文件，其中MdxSourceBuilder.vim已经包含了案例词典的配置信息
+
+案例使用：用 Vim 打开 MdxSourceBuilder.vim，新建文档，输入命令`:so MdxSourceBuilder.vim`
+
+* 你会看到，仅仅使用上述一个命令，就会输出3个成品文件：MarsDict.css，火星词典.txt，火星词典.mdx
+* 你若没有复现上述效果，也别着急，可能是vim、python和mdict-utils没有安装配置好，继续看看说明文件即可解决
+* 之后你只要照猫画虎，即可制作自己的图片词典了
+
+## 使用说明
 
 ### 极简使用说明
 
@@ -65,9 +78,10 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 ### 详细使用说明
 
-直接打开查阅 MdxSourceBuilder.vim，其中“使用方法”及“词典参数配置”两个部分自带详细使用说明。
+* 直接打开查阅 MdxSourceBuilder.vim，其中“使用方法”及“词典参数配置”两个部分自带详细使用说明。
+* 若想深度定制，把所有以"MdxSourceBuilder"开头的.vim文件看一遍就知道怎么处理了，即使不懂VimL语言，看注释也能猜个差不离。
 
-### 快速输入命令的Tip
+### Tips: 快速输入命令
 
 输入`so mdx` 之后，按Tab键即可自动补全命令 `:so MdxSourceBuilder.vim`
 
@@ -76,8 +90,9 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 1. 关于Vim的使用：号称编辑器之神，确实上手不易，但也没宣传的那么夸张的难，我已把与这个程序有关的内容都写到文档中了。
 2. 关于mdict-utils的使用：除了打包，还有很多其他解包、读取等功能，大家可以尽情挖掘改造。
 
-## 社区讨论
+## 社区讨论与反馈
 
+* Github: https://github.com/VimWei/MdxSourceBuilder
 * 讨论社区1: https://forum.freemdict.com/t/topic/2418
 * 讨论社区2: https://www.pdawiki.com/forum/thread-40857-1-1.html
 
