@@ -61,7 +61,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 案例使用：用 Vim 打开 MdxSourceBuilder.vim，新建文档，输入命令`:so MdxSourceBuilder.vim`
 
 * 你会看到，仅仅使用上述一个命令，就会输出3个成品文件：MarsDict.css，火星词典.txt，火星词典.mdx
-* 你若没有复现上述效果，也别着急，可能是vim、python和mdict-utils没有安装配置好，继续看看说明文件即可解决
+* 你若没有复现上述效果，也别着急，可能是vim、python和mdict-utils没有安装配置好，继续往下看说明文件即可解决
 * 之后你只要照猫画虎，即可制作自己的图片词典了
 
 ## 使用说明
@@ -83,7 +83,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 ### Tips: 快速输入命令
 
-输入`so mdx` 之后，按Tab键即可自动补全命令 `:so MdxSourceBuilder.vim`
+输入`:so mdx` 之后，按Tab键即可自动补全命令 `:so MdxSourceBuilder.vim`
 
 ### 相关FAQ
 
