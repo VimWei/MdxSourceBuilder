@@ -2,7 +2,9 @@
 
 mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标准化词条==> mdx源文件 ==> mdx词典文件
 
-视频演示: https://www.bilibili.com/video/BV1Ki4y1g74X/
+![MdxSourceBuilder Demo](https://raw.githubusercontent.com/VimWei/MdxSourceBuilder/master/MdxSourceBuilder.gif)
+
+更多视频演示: https://www.bilibili.com/video/BV1Ki4y1g74X/
 
 ## 背景
 
