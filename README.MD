@@ -93,8 +93,8 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 ## 社区讨论与反馈
 
 * Github: https://github.com/VimWei/MdxSourceBuilder
-* 讨论社区1: https://forum.freemdict.com/t/topic/2418
-* 讨论社区2: https://www.pdawiki.com/forum/thread-40857-1-1.html
+* 讨论社区1: https://forum.freemdict.com/t/topic/2882
+* 讨论社区2: https://www.pdawiki.com/forum/thread-41287-1-1.html
 
 ## LICENSE
 
