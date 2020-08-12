@@ -2,7 +2,7 @@
 
 mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标准化词条==> mdx源文件 ==> mdx词典文件
 
-![MdxSourceBuilder Demo](https://raw.githubusercontent.com/VimWei/MdxSourceBuilder/master/MdxSourceBuilder.gif)
+![MdxSourceBuilder GIF Demo](https://raw.githubusercontent.com/VimWei/MdxSourceBuilder/master/MdxSourceBuilderDemo.gif)
 
 更多视频演示: https://www.bilibili.com/video/BV1Ki4y1g74X/
 
@@ -62,7 +62,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 * 案例词条文件：以"火星词典"开头的所有.txt和.html文件，其中body.part1、body.part2、Pinyin三个文件展示了不同的词条格式
 * 程序及词典配置文件：以"MdxSourceBuilder"开头的所有.vim文件，其中MdxSourceBuilder.vim已经包含了案例词典的配置信息
 
-案例使用：用 Vim 打开 MdxSourceBuilder.vim，新建文档，输入命令`:so MdxSourceBuilder.vim`
+案例使用：用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`
 
 * 你会看到，仅仅使用上述一个命令，就会输出3个成品文件：MarsDict.css，火星词典.txt，火星词典.mdx
 * 你若没有复现上述效果，也别着急，可能是vim、python和mdict-utils没有安装配置好，继续往下看说明文件即可解决
@@ -72,13 +72,13 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 ### 极简使用说明
 
-用 Vim 打开 MdxSourceBuilder.vim，新建文档，输入命令`:so MdxSourceBuilder.vim`，结束。
+用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`，结束。
 
 ### 概要使用说明
 
 1. 按格式要求准备好词条文件
 2. 使用任意文本编辑器配置好 MdxSourceBuilder.vim 中的词典参数
-3. 用 Vim 打开 MdxSourceBuilder.vim，新建文档，输入命令`:so MdxSourceBuilder.vim`
+3. 用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`
 
 ### 详细使用说明
 
@@ -91,7 +91,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 ### 相关FAQ
 
-1. 关于Vim的使用：号称编辑器之神，确实上手不易，但也没宣传的那么夸张的难，我已把与这个程序有关的内容都写到文档中了。
+1. 关于Vim的使用：号称编辑器之神，要想完全掌握确实有难度，但本程序要用到的Vim知识则少的可怜，不必顾虑。
 2. 关于mdict-utils的使用：除了打包，还有很多其他解包、读取等功能，大家可以尽情挖掘改造。
 
 ## 社区讨论与反馈
