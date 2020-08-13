@@ -4,7 +4,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
 
-或者使用如下演示的纯命令方法：
+或者使用如下动图所示的方式（熟悉Vim的用户会更喜欢，因为会自动寻址）
 
 ![MdxSourceBuilder GIF Demo](https://raw.githubusercontent.com/VimWei/MdxSourceBuilder/master/MdxSourceBuilderDemo.gif)
 
@@ -95,7 +95,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
 
-* 那么建议使用如下更快的方法：
+* 那么建议使用如下更快的方法(自动寻址)：
 
 用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`
 
@@ -110,7 +110,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 1. 关于Vim的使用：号称编辑器之神，要想完全掌握确实有难度，但本程序要用到的Vim知识则少的可怜，不必顾虑。
 
 * Q: vim出现乱码
-* A: 并将`_vimrc`文件复制到`$HOME`目录下，Windwos下即是`c:\Users\YourName\`
+* A: 请将`_vimrc`文件复制到`$HOME`目录下，Windwos下即是`c:\Users\YourName\`
 
 2. 关于mdict-utils的使用：除了打包，还有很多其他解包、读取等功能，大家可以尽情挖掘改造。
 
