@@ -62,7 +62,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 * 案例词条文件：以"火星词典"开头的所有.txt和.html文件，其中body.part1、body.part2、Pinyin三个文件展示了不同的词条格式
 * 程序及词典配置文件：以"MdxSourceBuilder"开头的所有.vim文件，其中MdxSourceBuilder.vim已经包含了案例词典的配置信息
 
-案例使用：用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`
+案例使用：打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
 
 * 你会看到，仅仅使用上述一个命令，就会输出3个成品文件：MarsDict.css，火星词典.txt，火星词典.mdx
 * 你若没有复现上述效果，也别着急，可能是vim、python和mdict-utils没有安装配置好，继续往下看说明文件即可解决
@@ -72,13 +72,13 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 ### 极简使用说明
 
-打开Vim，输入命令 :bro so，找到MdxSourceBuilder.vim，确定，结束。
+打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
 
 ### 概要使用说明
 
 1. 按格式要求准备好词条文件
 2. 使用任意文本编辑器配置好 MdxSourceBuilder.vim 中的词典参数
-3. 打开Vim，输入命令 :bro so，找到MdxSourceBuilder.vim，确定，结束。
+3. 打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
 
 ### 详细使用说明
 
@@ -89,7 +89,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 若觉得如下步骤还要寻找MdxSourceBuilder.vim，有些麻烦
 
-    * 打开Vim，输入命令 :bro so，找到MdxSourceBuilder.vim，确定，结束。
+    * 打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
 
 那么建议使用如下更快的方法：
 
@@ -97,7 +97,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
     - 甚至输入`:so mdx` 之后，按Tab键即可自动补全命令 `:so MdxSourceBuilder.vim`
     - 这个新方法的逻辑，其实是利用Vim首次打开一个文件时，会将该文件所在目录设置为Vim当前工作目录。
-    - 也可以使用手工命令 :cd 来更换Vim的工作目录，如:cd d:\火星词典
+    - 也可以使用手工命令 `:cd` 来更换Vim的工作目录，如 `:cd d:\火星词典`
 
 ### 相关FAQ
 
