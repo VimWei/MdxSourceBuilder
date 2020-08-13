@@ -109,8 +109,8 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 1. 关于Vim的使用：号称编辑器之神，要想完全掌握确实有难度，但本程序要用到的Vim知识则少的可怜，不必顾虑。
 
-Q: vim出现乱码
-A: 并将`_vimrc`文件复制到`$HOME`目录下，Windwos下即是`c:\Users\YourName\`
+* Q: vim出现乱码
+* A: 并将`_vimrc`文件复制到`$HOME`目录下，Windwos下即是`c:\Users\YourName\`
 
 2. 关于mdict-utils的使用：除了打包，还有很多其他解包、读取等功能，大家可以尽情挖掘改造。
 
