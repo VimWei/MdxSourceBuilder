@@ -87,17 +87,19 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 ### Tips: 使用更便捷快速的命令
 
-若觉得如下步骤还要寻找MdxSourceBuilder.vim，有些麻烦
+* 若觉得如下步骤还要寻找MdxSourceBuilder.vim，有些麻烦
 
-    * 打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
+打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
 
-那么建议使用如下更快的方法：
+* 那么建议使用如下更快的方法：
 
-    * 用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`
+用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`
 
-    - 甚至输入`:so mdx` 之后，按Tab键即可自动补全命令 `:so MdxSourceBuilder.vim`
-    - 这个新方法的逻辑，其实是利用Vim首次打开一个文件时，会将该文件所在目录设置为Vim当前工作目录。
-    - 也可以使用手工命令 `:cd` 来更换Vim的工作目录，如 `:cd d:\火星词典`
+甚至输入`:so mdx` 之后，按Tab键即可自动补全命令 `:so MdxSourceBuilder.vim`
+
+这个新方法的逻辑，其实是利用Vim首次打开一个文件时，会将该文件所在目录设置为Vim当前工作目录。
+
+也可以使用手工命令 `:cd` 来更换Vim的工作目录，如 `:cd d:\火星词典`
 
 ### 相关FAQ
 
