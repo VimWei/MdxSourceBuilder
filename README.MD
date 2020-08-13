@@ -72,22 +72,32 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 ### 极简使用说明
 
-用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`，结束。
+打开Vim，输入命令 :bro so，找到MdxSourceBuilder.vim，确定，结束。
 
 ### 概要使用说明
 
 1. 按格式要求准备好词条文件
 2. 使用任意文本编辑器配置好 MdxSourceBuilder.vim 中的词典参数
-3. 用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`
+3. 打开Vim，输入命令 :bro so，找到MdxSourceBuilder.vim，确定，结束。
 
 ### 详细使用说明
 
 * 直接打开查阅 MdxSourceBuilder.vim，其中“使用方法”及“词典参数配置”两个部分自带详细使用说明。
 * 若想深度定制，把所有以"MdxSourceBuilder"开头的.vim文件看一遍就知道怎么处理了，即使不懂VimL语言，看注释也能猜个差不离。
 
-### Tips: 快速输入命令
+### Tips: 使用更便捷快速的命令
 
-输入`:so mdx` 之后，按Tab键即可自动补全命令 `:so MdxSourceBuilder.vim`
+若觉得如下步骤还要寻找MdxSourceBuilder.vim，有些麻烦
+
+    * 打开Vim，输入命令 :bro so，找到MdxSourceBuilder.vim，确定，结束。
+
+那么建议使用如下更快的方法：
+
+    * 用 Vim 打开 MdxSourceBuilder.vim，新建文档`:new`，输入命令`:so MdxSourceBuilder.vim`
+
+    - 甚至输入`:so mdx` 之后，按Tab键即可自动补全命令 `:so MdxSourceBuilder.vim`
+    - 这个新方法的逻辑，其实是利用Vim首次打开一个文件时，会将该文件所在目录设置为Vim当前工作目录。
+    - 也可以使用手工命令 :cd 来更换Vim的工作目录，如:cd d:\火星词典
 
 ### 相关FAQ
 
