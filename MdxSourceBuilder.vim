@@ -1,8 +1,10 @@
 " 使用方法 ----------------------------------------------------------------{{{1
-" 要求: 安装vim https://www.vim.org/，并在vimrc中添加一行set encoding=utf-8
+" 要求: 安装vim，请到官方网站下载 https://www.vim.org/
+"       并将_vimrc文件复制到$HOME目录下，Windwos下即是c:\Users\YourName\
+"
 " 1. 准备好词条文件
 " 2. 打开MdxSourceBuilder.vim，并配置好词典参数
-" 3. 使用 :new 创建新文件，并执行 :so MdxSourceBuilder.vim
+" 3. 输入命令 `:bro so`，找到MdxSourceBuilder.vim，确定，结束。
 
 " 配置词典参数 ------------------------------------------------------------{{{1
 
