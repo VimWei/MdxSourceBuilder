@@ -1,10 +1,10 @@
 # MdxSourceBuilder
 
-mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标准化词条==> mdx源文件 ==> mdx词典文件
+一键制作图片词典：原始词条==> 标准化词条==> mdx源文件 ==> mdx词典文件
 
 打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，打开，结束。
 
-或者使用如下动图所示的方式（熟悉Vim的用户会更喜欢，因为会自动寻址）
+或者使用如下自动寻址的方式（熟悉Vim的用户会更喜欢）
 
 ![MdxSourceBuilder GIF Demo](https://raw.githubusercontent.com/VimWei/MdxSourceBuilder/master/MdxSourceBuilderDemo.gif)
 
@@ -57,7 +57,7 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 * MdxSourceBuilderCore.vim  这是主程序调用的程序，仅当需要高级定制时修改，通常无需理会
 * MdxSourceBuilderCSS.vim  这是CSS文件，样式文件可以在这里定义，通常无需理会
 
-若有其他文件，都是附带的readme, 案例文件之类，可以尽情删除。
+其他文件，都是附带的Readme、动图演示、参考资料、案例词典之类，可以忽略。
 
 ## 体验案例“火星词典”
 
@@ -113,6 +113,8 @@ mdx图片词典制作工具：使用一个命令，实现从原始词条==> 标�
 
 * Q: vim出现乱码
 * A: 请将`_vimrc`文件复制到`$HOME`目录下，Windows下即是`c:\Users\YourName\`
+
+     其中必备行是 set encoding=utf-8，其他可选，用于提升Vim使用体验
 
 2. 关于mdict-utils的使用：除了打包，还有很多其他解包、读取等功能，大家可以尽情挖掘改造。
 
