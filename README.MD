@@ -4,7 +4,7 @@
 
 打开Vim，输入命令 `:bro so`，找到MdxSourceBuilder.vim，打开，结束。
 
-或者使用如下自动寻址的方式（熟悉Vim的用户会更喜欢）
+或者使用如下自动寻址方式 `:so MdxSourceBuilder.vim`
 
 ![MdxSourceBuilder GIF Demo](https://raw.githubusercontent.com/VimWei/MdxSourceBuilder/master/MdxSourceBuilderDemo.gif)
 
