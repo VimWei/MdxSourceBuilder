@@ -1,17 +1,28 @@
-" 使用方法 ----------------------------------------------------------------{{{1
-" 要求: 安装vim，请到官方网站下载 https://www.vim.org/
-"       并将_vimrc文件复制到$HOME目录下，Windows下即是c:\Users\YourName\
-"
+" ======================================================
+" MdxSourceBuilder 一键制作图片词典
+" 原始词条 ==> 标准化词条 ==> mdx源文件 ==> mdx词典文件
+" https://github.com/VimWei/MdxSourceBuilder
+" ======================================================
+" Requirement -------------------------------------------------------------{{{1
+" 1. 必须：安装Vim（官网下载 https://www.vim.org）
+"    并在vimrc配置文件中添加一行 set encoding=utf-8
+"    * 仅能输出CSS文件和mdx源文件
+" 2. 可选：安装对应版本的python（官网下载 https://www.python.org）
+"    可选：安装 mdict-utilis：pip install mdict-utils
+"    * 能输出mdx和mdd词典文件
+
+" Quick Guide -------------------------------------------------------------{{{1
 " 1. 准备好词条文件
 " 2. 打开MdxSourceBuilder.vim，并配置好词典参数
-" 3. 输入命令 :bro so ，找到 MdxSourceBuilder.vim，打开，结束。
+" 3. 使用 :new 创建新文件，并执行 :bro so，找到 MdxSourceBuilder.vim
+"    或者 :new 创建新文件，并执行 :so MdxSourceBuilder.vim
 
 " 配置词典参数 ------------------------------------------------------------{{{1
 
 " 拟输出的mdx源文件名称
 let s:mdxSourceFileName = "火星词典.txt"
 
-" CSS名称。CSS的具体定义请查阅 MdxSourceBuilderCSS.vim
+" CSS名称，其具体定义请查阅 MdxSourceBuilderCSS.vim
 let g:CSSName = "MarsDict.css"
 
 " 词典模块及其配置信息，格式如下：
@@ -24,7 +35,7 @@ let g:dictionaryParts = [
         \["火星词典.Appendix.txt", "MarsDictAppendix_", ".png", 0, 1],
         \["火星词典.Pinyin.txt", "MarsDict_", ".png", 2, 0],
         \]
-" dictionaryPart：不同词典模块的词条文件名称
+" dictionaryPart：词典各个模块的词条文件名称
 " picNamePrefix：图片前缀名，不同词典模块通常会采用不同的前缀名
 " picFormat：图片后缀名
 " PageKeywordStyle：
@@ -72,11 +83,12 @@ let s:autoMddPack = 0
 let s:imageFolder = "images"
 
 " 主程序 ------------------------------------------------------------------{{{1
-" ======================================================
-" 以下为程序正文，不熟悉Vim的用户请勿动
-" ======================================================
+"
+" =====================================
+" 以下为主程序，适合高级用户自行定制
+" =====================================
 
-" 设置Vim当前工作目录为本文件所在的目录 -----------------------------------{{{2
+" 设置Vim当前工作目录 -----------------------------------------------------{{{2
 let s:home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 silent! exe 'cd ' . s:home
 echomsg "已设置工作目录为：" . s:home
