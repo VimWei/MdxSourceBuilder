@@ -123,7 +123,7 @@ catch
     silent! exe "%write! " . g:CSSName
 endtry
 silent! 0,$d
-echomsg "已输出CSS，请查阅：" . g:CSSName
+echomsg "已输出CSS，请查阅：" . getcwd() . "\\" . g:CSSName
 
 " 输出MdxSource文件 -------------------------------------------------------{{{2
 silent! set fileformat=dos
@@ -146,8 +146,7 @@ silent! global/^$/d
 silent! w!
 silent! noh
 
-echomsg "已输出 MdxSource，请查阅: "
-        \. getcwd() . "\\" . s:mdxSourceFileName
+echomsg "已输出 MdxSource，请查阅: " . getcwd() . "\\" . s:mdxSourceFileName
 
 " 输出mdx文件 -------------------------------------------------------------{{{2
 " src: https://github.com/liuyug/mdict-utils
