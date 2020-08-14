@@ -88,8 +88,16 @@ let s:imageFolder = "images"
 " =====================================
 " 以下为主程序，适合高级用户自行定制
 " =====================================
-
-" 设置Vim当前工作目录 -----------------------------------------------------{{{2
+"
+" 初始化 ------------------------------------------------------------------{{{2
+"
+" 防止自加载
+if expand("%:p:t") == "MdxSourceBuilder.vim"
+    echo "请先 :new 创建新文件，再执行 :so MdxSourceBuilder.vim"
+    finish
+endif
+"
+" 设置当前工作目录为本文档所在目录
 let s:home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 silent! exe 'cd ' . s:home
 echomsg "已设置工作目录为：" . s:home
