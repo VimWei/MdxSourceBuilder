@@ -3,6 +3,13 @@
 " 原始词条 ==> 标准化词条 ==> mdx源文件 ==> mdx词典文件
 " https://github.com/VimWei/MdxSourceBuilder
 " ======================================================
+"
+" Quick Guide -------------------------------------------------------------{{{1
+" 1. 准备好词条文件
+" 2. 打开MdxSourceBuilder.vim，并配置好词典参数
+" 3. 使用 :new 创建新文件，并执行 :bro so，找到 MdxSourceBuilder.vim
+"    或者 :new 创建新文件，并执行 :so MdxSourceBuilder.vim
+"
 " Requirement -------------------------------------------------------------{{{1
 " 1. 必须：安装Vim（官网下载 https://www.vim.org）
 "    并在vimrc配置文件中添加一行 set encoding=utf-8
@@ -10,13 +17,7 @@
 " 2. 可选：安装对应版本的python（官网下载 https://www.python.org）
 "    可选：安装 mdict-utilis：pip install mdict-utils
 "    * 能输出mdx和mdd词典文件
-
-" Quick Guide -------------------------------------------------------------{{{1
-" 1. 准备好词条文件
-" 2. 打开MdxSourceBuilder.vim，并配置好词典参数
-" 3. 使用 :new 创建新文件，并执行 :bro so，找到 MdxSourceBuilder.vim
-"    或者 :new 创建新文件，并执行 :so MdxSourceBuilder.vim
-
+"
 " 配置词典参数 ------------------------------------------------------------{{{1
 
 " 拟输出的mdx源文件名称
