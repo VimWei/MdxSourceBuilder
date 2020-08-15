@@ -206,8 +206,10 @@ function! KeywordsNav(currentPage, currentWord)
     for keyword in s:keywordsDict[a:currentPage]
         if keyword == a:currentWord
             let keyword = '<a class="keywordsNavKeyword currentKeyword" '
-                            \. 'href="entry://' . keyword . '">'
-                            \. keyword . '</a>'
+                    \. 'href="entry://' . keyword . '">'
+                    \. keyword . " "
+                    \. printf("%.0f%%", (keywordCount + 1) * 100.0/len(s:keywordsDict[a:currentPage]))
+                    \. '</a>'
         else
             let keyword = '<a class="keywordsNavKeyword" '
                             \. 'href="entry://' . keyword . '">'
