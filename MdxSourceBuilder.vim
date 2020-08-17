@@ -50,6 +50,10 @@ let g:dictionaryParts = [
 " - 若是每页关键词很多的正文，建议设为2：不仅有页面导航，而且有keywords导航
 " 可根据需要自行修改MdxSourceBuilderCore.Vim，以定义个性化的导航样式
 
+" 补充更多的mdx源文件，比如@@@LINK文件
+let s:anyMore = 1
+let s:anyMoreMdxSource = "火星词典.Link.txt"
+
 " 自定义固定链接的导航：\[链接名称, 链接目标图片名称],
 let g:customNavList = [
             \["封面", "MarsDictCover_0001"],
@@ -142,6 +146,13 @@ endfor
 echomsg "正在生成 MdxSource 文件……"
 let @x = g:mdxSource
 silent! $put x
+
+" 补充更多的Mdx源文件
+if s:anyMore == 1
+    silent! normal G
+    silent! exe "read ". s:anyMoreMdxSource
+endif
+
 silent! global/^$/d
 silent! w!
 silent! noh
