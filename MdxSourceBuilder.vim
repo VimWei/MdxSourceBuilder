@@ -78,8 +78,6 @@ let s:autoMdxPack = 1
 "   - 缺点：需要安装如下软件，并配置信息
 "       + 安装 与 Vim 匹配的 python 版本
 "       + 安装 mdict-utilis：pip install mdict-utils
-"       + 配置词典标题文件：词典名.info.title.html
-"       + 配置词典描述文件：词典名.info.description.html
 
 " 自动打包图片等资源到mdd
 " 打包设为1，不打包则设为0
@@ -88,32 +86,73 @@ let s:autoMddPack = 0
 let s:imageFolder = "images"
 
 " 主程序 ------------------------------------------------------------------{{{1
-"
-" =====================================
-" 以下为主程序，适合高级用户自行定制
-" =====================================
-"
+" ==================================
+" * 以下为主程序，适合高级用户定制 *
+" ==================================
+
 " 初始化 ------------------------------------------------------------------{{{2
-"
+
 " 防止自加载
 if expand("%:p:t") == "MdxSourceBuilder.vim"
     echo "请先 :new 创建新文件，再执行 :so MdxSourceBuilder.vim"
     finish
 endif
-"
+
+" 清空历史消息
+messages clear
+
 " 设置当前工作目录为本文档所在目录
 let s:home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 silent! exe 'cd ' . s:home
 echomsg "已设置工作目录为：" . s:home
 
-" 输出CSS文件 -------------------------------------------------------------{{{2
-messages clear
+" 保存mdxSource文件
+try
+    silent! exe "write! " . s:mdxSourceFileName
+catch
+    silent! exe "bdelete! ". s:mdxSourceFileName
+    silent! exe "write! " . s:mdxSourceFileName
+endtry
 
+" 重置info.title和info.description文件的编码为utf-8
+if s:autoMdxPack == 1
+    silent! set fileformat=unix
+    silent! set nobomb
+    silent! set fileencoding=utf-8
+    " 设置info.title.html文件为utf-8格式
+    silent! 0,$d
+    silent! exe "read "
+            \. substitute(s:mdxSourceFileName, ".txt$", ".info.title.html", "")
+    silent! 0d
+    try
+        silent! exe "write! "
+            \. substitute(s:mdxSourceFileName, ".txt$", ".info.title.html", "")
+    catch
+        silent! exe "bdelete! "
+            \. substitute(s:mdxSourceFileName, ".txt$", ".info.title.html", "")
+        silent! exe "write! "
+            \. substitute(s:mdxSourceFileName, ".txt$", ".info.title.html", "")
+    endtry
+    " 设置info.description.html文件为utf-8格式
+    silent! 0,$d
+    silent! exe "read "
+            \. substitute(s:mdxSourceFileName, ".txt$", ".info.description.html", "")
+    silent! 0d
+    try
+        silent! exe "write! "
+            \. substitute(s:mdxSourceFileName, ".txt$", ".info.description.html", "")
+    catch
+        silent! exe "bdelete! "
+            \. substitute(s:mdxSourceFileName, ".txt$", ".info.description.html", "")
+        silent! exe "write! "
+            \. substitute(s:mdxSourceFileName, ".txt$", ".info.description.html", "")
+    endtry
+endif
+
+" 输出CSS文件 -------------------------------------------------------------{{{2
 silent! set fileformat=unix
 silent! set nobomb
-silent! set fileencoding=UTF-8
-
-silent! exe "write! " . s:mdxSourceFileName
+silent! set fileencoding=utf-8
 
 " 输出CSS文件：若已打开，则先关闭旧的，再保存新的
 silent! 0,$d
@@ -121,10 +160,10 @@ silent! exe "read ". "MdxSourceBuilderCSS.vim"
 silent! 0d
 
 try
-    silent! exe "%write! " . g:CSSName
+    silent! exe "write! " . g:CSSName
 catch
     silent! exe "bdelete! ". g:CSSName
-    silent! exe "%write! " . g:CSSName
+    silent! exe "write! " . g:CSSName
 endtry
 silent! 0,$d
 echomsg "已输出CSS，请查阅：" . getcwd() . "\\" . g:CSSName
@@ -132,7 +171,7 @@ echomsg "已输出CSS，请查阅：" . getcwd() . "\\" . g:CSSName
 " 输出MdxSource文件 -------------------------------------------------------{{{2
 silent! set fileformat=dos
 silent! set nobomb
-silent! set fileencoding=UTF-8
+silent! set fileencoding=utf-8
 
 let g:mdxSource = ""
 for dictionaryPart in g:dictionaryParts
@@ -154,7 +193,7 @@ if s:anyMore == 1
 endif
 
 silent! global/^$/d
-silent! w!
+silent! write!
 silent! noh
 
 echomsg "已输出 MdxSource，请查阅: " . getcwd() . "\\" . s:mdxSourceFileName
