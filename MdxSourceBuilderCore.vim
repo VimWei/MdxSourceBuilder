@@ -49,9 +49,9 @@ elseif s:PageKeywordStyle == 2
     " 0003    abdominous
 
     normal gg
+    silent! %s/\t/    /e
     let linenumber = "0000"
     for line in getline(1,'$')
-        silent! s/\t/    /e
         let words = split(line, '\s\{4,}')
         if linenumber == words[0]
             silent! s/^.*$/\= words[1]/e
