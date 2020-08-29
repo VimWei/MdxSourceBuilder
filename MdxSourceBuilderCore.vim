@@ -57,7 +57,7 @@ elseif s:PageKeywordStyle == 2
             silent! s/^.*$/\= words[1]/e
         else
             let linenumber = words[0]
-            silent! s/^.*$/\= words[0] . "\n". words[1]/e
+            silent! s/^.*$/\= words[0] . "\n". get(words, 1, "")/e
         endif
         silent! normal j
     endfor
@@ -77,7 +77,7 @@ let s:pageList = uniq(sort(s:pageList,'n'))
 
 " 创建 keywordsDict
 let s:keywordsDict = {}
-silent! vimgrep /\d\d\d\d$/ %
+silent! vimgrep /^\d\{4}$/ %
 function! KeywordsDict()
     let startline = line(".")
     let currentPage = str2nr(getline('.'))
