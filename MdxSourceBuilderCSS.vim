@@ -1,3 +1,4 @@
+/* 顶部的导航 */
 .NavTop {
     margin: 0 0 10px 0;
     text-align: center;
@@ -33,7 +34,10 @@
 }
 .lastPage {}
 
-.keywordsNav {}
+/* 关键词导航 */
+.keywordsNav {
+    color: blue;
+}
 .keywordsNavKeyword {
     padding: 0 5px;
     text-decoration: none;
@@ -42,22 +46,32 @@
     color: red;
     font-weight: 700;
 }
-
-.mainbodyimg img {
-    width: 100%;
+.subkeywords .keywordsNavKeyword {
+    padding: 0;
 }
 
+/* 正文图片 */
+.mainbodyimg img {
+    width: 100%;
+    /* 对于透明图片的词典，可更改背景色以适应黑夜模式 */
+    /* 取消以下background-color的注释，并挑选您喜欢的颜色 https://encycolorpedia.cn/named */
+    /* background-color: linen; */
+}
+
+/* 底部的导航 */
 .NavBottom {
     margin: 10px 0 0 0;
     text-align: center;
 }
 
+/* 自定义导航 */
 .customNav {}
 .customNavKeyword {
     padding: 0 5px;
     text-decoration: none;
 }
 
+/* 底部的页面导航 */
 .NavBottom .pagesNav {
     background-color: #EAEAEA;
     color: black;
