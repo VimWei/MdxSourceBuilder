@@ -226,3 +226,5 @@ if s:autoMddPack == 1
 endif
 
 finish
+
+/* vim: set et sw=4 ts=4 sts=4 fdm=marker ff=unix ft=vim fenc=utf8 nobomb: */

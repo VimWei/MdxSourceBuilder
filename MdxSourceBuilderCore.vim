@@ -306,3 +306,5 @@ finish
 
 " 在新Tab页打开output文件
 silent! tabe %:r.output.%:e
+
+/* vim: set et sw=4 ts=4 sts=4 fdm=marker ff=unix ft=vim fenc=utf8 nobomb: */
