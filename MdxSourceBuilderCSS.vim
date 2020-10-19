@@ -52,7 +52,13 @@
 
 /* 正文图片 */
 .mainbodyimg img {
+    /* 设置图片大小 */
     width: 100%;
+    /* width: 42em; */
+    /* display: block; */
+    /* margin-left: auto; */
+    /* margin-right: auto; */
+
     /* 对于透明图片的词典，可更改背景色以适应黑夜模式 */
     /* 取消以下background-color的注释，并挑选您喜欢的颜色 https://encycolorpedia.cn/named */
     /* background-color: linen; */

@@ -243,8 +243,8 @@ elseif s:KeywordsNavStyle == 1
         silent! let @p = s:picNamePrefix . printf("%04d", currentPage) . "\n"
             \. '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
             \. '<div class="NavTop">'
-            \. PagesNav(currentPage, s:picNamePrefix)
             \. CustomNav(s:customNavList)
+            \. PagesNav(currentPage, s:picNamePrefix)
             \. '</div>'
             \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
             \. printf("%04d", currentPage) . s:picFormat . '" /></div>'
@@ -266,13 +266,13 @@ elseif s:KeywordsNavStyle == 2
         silent! let @p = s:picNamePrefix . printf("%04d", currentPage) . "\n"
             \. '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
             \. '<div class="NavTop">'
+            \. CustomNav(s:customNavList)
             \. PagesNav(currentPage, s:picNamePrefix)
             \. KeywordsNav(currentPage, "")
             \. '</div>'
             \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
             \. printf("%04d", currentPage) . s:picFormat . '" /></div>'
             \. '<div class="NavBottom">'
-            \. CustomNav(s:customNavList)
             \. PagesNav(currentPage, s:picNamePrefix)
             \. "</div>\n"
             \. '</>'
@@ -281,13 +281,13 @@ elseif s:KeywordsNavStyle == 2
             silent! let @k = currentKeyword . "\n"
                 \. '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
                 \. '<div class="NavTop">'
+                \. CustomNav(s:customNavList)
                 \. PagesNav(currentPage, s:picNamePrefix)
                 \. KeywordsNav(currentPage, currentKeyword)
                 \. '</div>'
                 \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
                 \. printf("%04d", currentPage) . s:picFormat . '" /></div>'
                 \. '<div class="NavBottom">'
-                \. CustomNav(s:customNavList)
                 \. PagesNav(currentPage, s:picNamePrefix)
                 \. "</div>\n"
                 \. '</>'
