@@ -201,15 +201,18 @@ echomsg "已输出 MdxSource，请查阅: " . getcwd() . "\\" . s:mdxSourceFileN
 " 输出mdx文件 -------------------------------------------------------------{{{2
 " src: https://github.com/liuyug/mdict-utils
 
+" Linux下的参数不用引号，但要将空格转义，以下代码供参考，未测试
+" let s:mdxSourceFileName = substitute(s:mdxSourceFileName, "\\s", "\\\\ ", 'g')
+
 if s:autoMdxPack == 1
     echomsg "正在生成 Mdx 文件..."
-    silent! exe "!mdict"
-        \. " --title "
+    silent! exe '!mdict'
+        \. ' --title "'
         \. substitute(s:mdxSourceFileName, ".txt$", ".info.title.html", "")
-        \. " --description "
+        \. '" --description "'
         \. substitute(s:mdxSourceFileName, ".txt$", ".info.description.html", "")
-        \. " -a % "
-        \. substitute(s:mdxSourceFileName, ".txt$", ".mdx", "")
+        \. '" -a "' . s:mdxSourceFileName . '" "'
+        \. substitute(s:mdxSourceFileName, ".txt$", ".mdx", "") . '"'
 
     echomsg "已输出 Mdx，请查阅: " . getcwd() . "\\"
         \. substitute(s:mdxSourceFileName, ".txt$", ".mdx", "")
@@ -217,9 +220,9 @@ endif
 
 if s:autoMddPack == 1
     echomsg "正在生成 Mdd 文件..."
-    silent! exe "!mdict"
-        \. " -a " . s:imageFolder . " "
-        \. substitute(s:mdxSourceFileName, ".txt$", ".mdd", "")
+    silent! exe '!mdict'
+        \. ' -a "' . s:imageFolder . '" "'
+        \. substitute(s:mdxSourceFileName, ".txt$", ".mdd", "") . '"'
 
     echomsg "已输出 Mdd，请查阅: " . getcwd() . "\\"
         \. substitute(s:mdxSourceFileName, ".txt$", ".mdd", "")
