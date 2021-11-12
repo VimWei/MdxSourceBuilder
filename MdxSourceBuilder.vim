@@ -27,34 +27,61 @@ let s:mdxSourceFileName = "火星词典.txt"
 let g:CSSName = "MarsDict.css"
 
 " 词典模块及其配置信息，格式如下：
-" \[dictionaryPart, picNamePrefix, picFormat, PageKeywordStyle, KeywordsNavStyle],
+" \[dictionaryPart, picNamePrefix, picFormat,
+" \sourceStyle, pageNumDigit,
+" \navStyle, locationPercent, nearestKeyword],
 let g:dictionaryParts = [
-        \["火星词典.Cover.txt", "MarsDictCover_", ".png", 0, 1],
-        \["火星词典.Prefix.txt", "MarsDictPrefix_", ".png", 0, 1],
-        \["火星词典.Body.Part1.txt", "MarsDict_", ".png", 0, 2],
-        \["火星词典.Body.Part2.txt", "MarsDict_", ".png", 1, 2],
-        \["火星词典.Appendix.txt", "MarsDictAppendix_", ".png", 0, 1],
-        \["火星词典.Pinyin.txt", "MarsDict_", ".png", 2, 0],
+        \["火星词典.Cover.txt", "MarsDictCover_", ".png", 0, 4, 1, 0, 1],
+        \["火星词典.Prefix.txt", "MarsDictPrefix_", ".png", 0, 4, 1, 0, 1],
+        \["火星词典.Body.Part1.txt", "MarsDict_", ".png", 0, 4, 2, 1, 1],
+        \["火星词典.Body.Part2.txt", "MarsDict_", ".png", 1, 4, 2, 1, 1],
+        \["火星词典.Appendix.txt", "MarsDictAppendix_", ".png", 0, 4, 1, 0, 1],
+        \["火星词典.Pinyin.txt", "MarsDict_", ".png", 2, 4, 0, 0, 0],
         \]
 " dictionaryPart：词典各个模块的词条文件名称
 " picNamePrefix：图片前缀名，不同词典模块通常会采用不同的前缀名
 " picFormat：图片后缀名
-" PageKeywordStyle：
-" -若词条格式为'一行页码 + 多行关键词（每行一个关键词）'的标准词条格式，则设为0
-" -若词条格式为'一个页码+多个中文单字符的关键词'的压缩词条格式，则设为1
-" -若词条格式为'页码 + 分隔符 + 单个中或英关键词'的啰嗦行格式，则设为2
-" 可根据需要自行修改MdxSourceBuilderCore.Vim，以添加各种兼容格式
-" KeywordsNavStyle：根据需要定义Keywords导航样式
-" - 若是拼音之类的辅助检索，建议设为0：自身没有页面和keywords导航，仅转LINK
-" - 若是封面/附录之类的Affix，建议设为1：仅有页面导航，无keywords导航，简洁
-" - 若是每页关键词很多的正文，建议设为2：不仅有页面导航，而且有keywords导航
-" 可根据需要自行修改MdxSourceBuilderCore.Vim，以定义个性化的导航样式
+" sourceStyle：定义兼容的词条格式（MdxSourceBuilderCore.Vim）
+" - 0：'一行页码 + 多行关键词（每行一个关键词）'的标准词条格式，跳转至页码
+" - 1：'一个页码 + 多个中文单字符的关键词'的压缩词条格式，跳转至页码
+" - 2：'页码 + 分隔符 + 单个中或英关键词'的啰嗦行格式，跳转至页码
+" pageNumDigit：（词条/图片名等）的页码位数，默认为4，支持3及以上
+" navStyle：定义个性化的词条导航样式（MdxSourceBuilderCore.Vim）
+" - 0：自身没有页面和keywords导航，仅转LINK，适用于拼音之类的辅助检索
+" - 1：仅有页面导航，无keywords导航，简洁，适用于封面/附录之类的Affix
+" - 2：不仅有页面导航，而且有keywords导航，适用于每页关键词很多的正文
+" locationPercent：词条导航是否显示百分比定位信息
+" - 0：不显示百分比定位信息
+" - 1：显示百分比定位信息
+" nearestKeyword：词条导航是否显示距本页最近的前/后一个词条
+" - 0：不显示最近的前后词条，适合词条较多的情形
+" - 1：显示最近的前后词条，适合词条较少情形下的跨页跳转
 
-" 补充更多的mdx源文件，比如@@@LINK文件
+" 补充额外的mdx源文件，兼容多种风格的来源
 let s:anyMore = 1
-let s:anyMoreMdxSource = "火星词典.Link.txt"
+" 格式：\[anyMorePart, sourceStyle, pagePrefix],
+let g:anyMoreSources = [
+        \["火星词典.Link1.txt", 4, ""],
+        \["火星词典.Link2.txt", 5, "OPEU3_"],
+        \["火星词典.Link3.txt", 998, ""],
+        \["火星词典.Link4.txt", 7, ""],
+        \["火星词典.Link5.txt", 6, "OPEU3Pre_"],
+        \["火星词典.Link6.txt", 998, ""],
+        \["火星词典.Link7.txt", 0, "OPEU3_"],
+        \["火星词典.Link888.txt", 888, ""],
+        \]
+" anyMorePart：源文件的名称，包括后缀名
+" sourceStyle：定义兼容的源文件或词条格式（MdxSourceBuilderLink.Vim）
+" - 0：固定项目，'一行页码 + 多行关键词（每行一个关键词）'的标准词条格式
+" - 1：固定项目，'一个页码 + 多个中文单字符的关键词'的压缩词条格式
+" - 2：固定项目，'页码 + 分隔符 + 单个中或英关键词'的啰嗦行格式
+" - 888: 固定项目，用于快速手工添加链接词条，"现有关键词\t链接词条"
+" - 998: 固定项目，源文件为标准的mdx源格式，但欠缺CSS文件等必要元素
+" - 999：固定项目，源文件为标准的mdx源格式，无需进一步处理，直接使用
+" - 其他: 定制化项目，自定义词条样式及处理程序
+" pagePrefix：可选；但当sourceStyle为0/1/2时，必须配置
 
-" 自定义固定链接的导航：\[链接名称, 链接目标图片名称],
+" 自定义固定链接的导航：\[链接名称, 链接目标],
 let g:customNavList = [
             \["封面", "MarsDictCover_0001"],
             \["扉页", "MarsDictCover_0002"],
@@ -69,11 +96,12 @@ let g:customNavList = [
             \]
 
 " 将.txt格式的mdx源文件打包为.mdx格式的词典文件
+" 打包设为1，不打包则设为0
 let s:autoMdxPack = 1
-" 若设置为0，则不会输出.mdx词典文件，需要另行用MdxBuilder 3.x等工具手工打包
+" - 0：不输出.mdx词典文件，需要另行用MdxBuilder 3.x等工具手工打包
 "   - 特点：mdx官方打包工具，对各种词典的兼容性最好
 "   - 缺点：对大文件支持不够好；需要手工打包
-" 若设置为1，则使用 mdict-utils 自动打包生成.mdx词典文件
+" - 1，使用 mdict-utils 自动打包生成.mdx词典文件
 "   - 特点：自动化、速度快、大词库、跨平台
 "   - 缺点：需要安装如下软件，并配置信息
 "       + 安装 与 Vim 匹配的 python 版本
@@ -179,18 +207,25 @@ for dictionaryPart in g:dictionaryParts
     silent! 0,$d
     silent! exe "read ". dictionaryPart[0]
     silent! 0d
-    silent! source MdxSourceBuilderCore.vim
+    source MdxSourceBuilderCore.vim
     silent! 0,$d
 endfor
-echomsg "正在生成 MdxSource 文件……"
-let @x = g:mdxSource
-silent! $put x
 
 " 补充更多的Mdx源文件
 if s:anyMore == 1
-    silent! normal G
-    silent! exe "read ". s:anyMoreMdxSource
+    for anyMoreSource in g:anyMoreSources
+        echomsg "正在处理：" . substitute(anyMoreSource[0], ".txt", "", "")
+        silent! 0,$d
+        silent! exe "read ". anyMoreSource[0]
+        silent! 0d
+        source MdxSourceBuilderLink.vim
+        silent! 0,$d
+    endfor
 endif
+
+echomsg "正在生成 MdxSource 文件……"
+let @x = g:mdxSource
+silent! $put x
 
 silent! global/^$/d
 silent! write!

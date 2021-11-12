@@ -1,0 +1,34 @@
+" 适用于快速手工添加链接词条
+" 词条格式：现有关键词\t链接词条\t链接词条
+" 分隔符兼容Tab和空格(4位及以上)
+" 可以添加注释行：以 " 开头
+" 可以添加空行
+
+OPEU3Cover_0001     PEU     OPEU     英语用法指南     牛津英语用法指南
+
+汉英语言术语表及索引     从句    补语
+
+verbs, tense and aspect     动词    时态
+be, do, have and modal auxiliaries     动词    情态动词     助动词
+verbs: other points     动词
+verb    动词
+infinitives and participles     动词不定式
+link verbs      系动词
+participles     分词
+
+noun    名词
+attributive    定语
+predicative     表语
+OPEU3_0989      表语
+articles    冠词    定冠词      不定冠词
+
+prefixes     前缀
+suffixes     后缀
+
+sentence structure     句型     句子
+relative structures     关系从句
+negative structures     否定句
+questions       疑问句
+passives     被动句
+
+comparatives and superlatives       比较级      最高级

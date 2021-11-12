@@ -1,83 +1,83 @@
 " 读取词典参数 ------------------------------------------------------------{{{1
-
 let s:CSSName = g:CSSName
 let s:customNavList = g:customNavList
 let s:picNamePrefix = dictionaryPart[1]
 let s:picFormat = dictionaryPart[2]
-let s:PageKeywordStyle = dictionaryPart[3]
-let s:KeywordsNavStyle = dictionaryPart[4]
+let s:sourceStyle = dictionaryPart[3]
+let s:pageNumDigit = '%0'. dictionaryPart[4] . 'd'
+let s:navStyle = dictionaryPart[5]
+let s:locationPercent = dictionaryPart[6]
+let s:nearestKeyword = dictionaryPart[7]
 
-" mdx源文件格式初始化 -----------------------------------------------------{{{1
+" 初始化及通用函数定义 ----------------------------------------------------{{{1
 " 清理并保存，以便后续代码可以正常运作
 silent! normal! Go
 silent! global/^$/d
 silent! w!
 
-" 将input词条格式标准化 ---------------------------------------------------{{{1
-if s:PageKeywordStyle == 0
-    " 适合如下标准词条格式：一行页码 + 多行关键词（每行一个关键词）
-    " 0001
-    " a
-    " b
-    " c
-    " 0002
-    " x
-    " y
-    " z
-elseif s:PageKeywordStyle == 1
-    " 适合如下词条格式：行格式为'一个页码+多个中文单字符的关键词'
-    " 0001吖阿啊锕腌啊嗄啊哎
-    " 0002哀埃挨唉锿挨皑癌毐欸嗳矮蔼
-    " 0003霭艾砹唉爱隘碍嗳嗌媛瑷
-
-    " 以下将的单行格式转换为标准词条格式
-    " 将页码换行
-    silent! %s/^\d\{4}\($\)\@!/\0\r/e
-    " 将每个字独立成行
-    silent! %s/\D\($\)\@!/\0\r/ge
+function! StandardizeStyle(sourceStyle)
+    " 将 page,keywords 输入文件格式整理为标准格式
+    if s:sourceStyle == 0
+        " No further treatment is required
+        " 适合如下标准词条格式：一行页码 + 多行关键词（每行一个关键词）
+        " 0001
+        " a
+        " b
+        " c
+        " 0002
+        " x
+        " y
+        " z
+    elseif s:sourceStyle == 1
+        " 适合如下词条格式：行格式为'一个页码+多个中文单字符的关键词'
+        " 0001吖阿啊锕腌啊嗄啊哎
+        " 0002哀埃挨唉锿挨皑癌毐欸嗳矮蔼
+        " 0003霭艾砹唉爱隘碍嗳嗌媛瑷
+        " 以下将的单行格式转换为标准词条格式
+        " 将页码换行
+        silent! %s/^\d\{3,}\($\)\@!/\0\r/e
+        " 将每个字独立成行
+        silent! %s/\D\($\)\@!/\0\r/ge
+    elseif s:sourceStyle == 2
+        " 适合如下词条格式：行格式为"页码 + 分隔符 + 单个中或英关键词"
+        " 分隔符兼容：Tab键'\t', 4个及以上空格'\s\{4,}'
+        " 0001    abandon
+        " 0001    abandoned
+        " 0002    abandonee
+        " 0002    a bas
+        " 0003    abdominous
+        normal gg
+        " 将所有Tab替换为空格
+        silent! set expandtab tabstop=4 | %retab
+        let linenumber = printf(s:pageNumDigit, 0)
+        for line in getline(1,'$')
+            let words = split(line, '\s\{4,}')
+            if linenumber == words[0]
+                silent! s/^.*$/\= words[1]/e
+            else
+                let linenumber = words[0]
+                silent! s/^.*$/\= words[0] . "\n". get(words, 1, "")/e
+            endif
+            silent! normal j
+        endfor
+    else
+        " echomsg "未定义处理方案"
+    endif
     " 清理并保存，以便后续代码可以正常运作
     silent! normal! Go
     silent! global/^$/d
     silent! w!
-elseif s:PageKeywordStyle == 2
-    " 适合如下词条格式：行格式为"页码 + 分隔符 + 单个中或英关键词"
-    " 分隔符兼容：Tab键'\t', 4个及以上空格'\s\{4,}'
-    " 0001    abandon
-    " 0001    abandoned
-    " 0002    abandonee
-    " 0002    a bas
-    " 0003    abdominous
+endfunction
 
-    normal gg
-    silent! %s/\t/    /e
-    let linenumber = "0000"
-    for line in getline(1,'$')
-        let words = split(line, '\s\{4,}')
-        if linenumber == words[0]
-            silent! s/^.*$/\= words[1]/e
-        else
-            let linenumber = words[0]
-            silent! s/^.*$/\= words[0] . "\n". get(words, 1, "")/e
-        endif
-        silent! normal j
-    endfor
-    " 清理并保存，以便后续代码可以正常运作
-    silent! normal! Go
-    silent! global/^$/d
-    silent! w!
-endif
+function! PageList()
+    " 创建、排序、去重 pageList
+    let s:pageList = []
+    global/^\d\{3,}$/call add(s:pageList, str2nr(getline('.')))
+    let s:pageList = uniq(sort(s:pageList,'n'))
+    return s:pageList
+    " echomsg s:pageList
+endfunction
 
-" 创建pageList 和 keywordsDict --------------------------------------------{{{1
-
-" 创建、排序、去重 pageList
-let s:pageList = []
-global/^\d\{4}$/call add(s:pageList, str2nr(getline('.')))
-let s:pageList = uniq(sort(s:pageList,'n'))
-" echomsg s:pageList
-
-" 创建 keywordsDict
-let s:keywordsDict = {}
-silent! vimgrep /^\d\{4}$/ %
 function! KeywordsDict()
     let startline = line(".")
     let currentPage = str2nr(getline('.'))
@@ -104,14 +104,16 @@ function! KeywordsDict()
     endif
     return s:keywordsDict
 endfunction
-silent! cdo call KeywordsDict()
-" echomsg s:keywordsDict
 
-" 清空全文
-silent! normal! ggdG
+function! KeywordsDicts()
+    let s:keywordsDict = {}
+    silent! vimgrep /^\d\{3,}$/ %
+    silent! cdo call KeywordsDict()
+    " echomsg s:keywordsDict
+endfunction
 
-" CustomNav() 输出自定义导航条 --------------------------------------------{{{1
 function! CustomNav(customNavList)
+    " 输出自定义导航条
     let customNav = ""
     for customNavKey in a:customNavList
         let customNavKeyword = '<a class="customNavKeyword" href="entry://'
@@ -124,9 +126,8 @@ function! CustomNav(customNavList)
     return customNav
 endfunction
 
-" PagesNav() 输出页码导航条 -----------------------------------------------{{{1
 function! PagesNav(currentPage, picNamePrefix)
-    " 根据所有页码及当前页码所在位置，输出相应的pagesNav
+    " 根据所有页码及当前页码所在位置，输出页码导航条
     " 兼容性：页码可以重复、跳页、乱序
 
     " 定义关键位置和页码
@@ -142,16 +143,20 @@ function! PagesNav(currentPage, picNamePrefix)
     let lastPage = s:pageList[-1]
     let previousPage = get(s:pageList, cidx-1, 'PAGE404')
     let previous2Page = get(s:pageList, cidx-2, 'PAGE404')
+    let previous3Page = get(s:pageList, cidx-3, 'PAGE404')
     let nextPage = get(s:pageList, cidx+1, 'PAGE404')
     let next2Page = get(s:pageList, cidx+2, 'PAGE404')
+    let next3Page = get(s:pageList, cidx+3, 'PAGE404')
 
     " 定义链接内容和样式
     let firstPage = PageLink(firstPage, "firstPage", a:picNamePrefix)
+    let previous3Page = PageLink(previous3Page, "previous3Page", a:picNamePrefix)
     let previous2Page = PageLink(previous2Page, "previous2Page", a:picNamePrefix)
     let previousPage = PageLink(previousPage, "previousPage", a:picNamePrefix)
     let currentPage = PageLink(currentPage, "currentPage", a:picNamePrefix)
     let nextPage = PageLink(nextPage, "nextPage", a:picNamePrefix)
     let next2Page = PageLink(next2Page, "next2Page", a:picNamePrefix)
+    let next3Page = PageLink(next3Page, "next3Page", a:picNamePrefix)
     let lastPage = PageLink(lastPage, "lastPage", a:picNamePrefix)
 
     " 根据当前页码所在位置，输出相应的pagesNav
@@ -159,10 +164,13 @@ function! PagesNav(currentPage, picNamePrefix)
     if cidx > firstidx
         let pagesNav = firstPage
     endif
-    if cidx-3 > firstidx
+    if cidx-4 > firstidx
         let pagesNav = pagesNav . ' ... '
     elseif cidx != firstidx
         let pagesNav = pagesNav . ', '
+    endif
+    if cidx-3 > firstidx
+        let pagesNav = pagesNav . previous3Page . ', '
     endif
     if cidx-2 > firstidx
         let pagesNav = pagesNav . previous2Page . ', '
@@ -178,6 +186,9 @@ function! PagesNav(currentPage, picNamePrefix)
         let pagesNav = pagesNav . ', ' . next2Page
     endif
     if cidx+3 < lastidx
+        let pagesNav = pagesNav . ', ' . next3Page
+    endif
+    if cidx+4 < lastidx
         let pagesNav = pagesNav . ' ... '
     elseif cidx != lastidx
         let pagesNav = pagesNav . ', '
@@ -193,23 +204,30 @@ function! PageLink(page, className, picNamePrefix)
     " 根据页码信息，输出页码对应的链接和样式
     let pageLink = '<a class="pageNum ' . a:className .'" '
             \. 'href="entry://' . a:picNamePrefix
-            \. printf("%04d", a:page) . '">'
+            \. printf(s:pageNumDigit, a:page) . '">'
             \. a:page . '</a>'
     return pageLink
 endfunction
 
-" KeywordsNav() 输出页面关键字导航条 --------------------------------------{{{1
 function! KeywordsNav(currentPage, currentWord)
     " 输出关键字导航
     let keywordsNav = ""
     let keywordCount = 0
     for keyword in s:keywordsDict[a:currentPage]
         if keyword == a:currentWord
-            let keyword = '<a class="keywordsNavKeyword currentKeyword" '
-                    \. 'href="entry://' . keyword . '">'
-                    \. keyword . " "
-                    \. printf("%.0f%%", (keywordCount + 1) * 100.0/len(s:keywordsDict[a:currentPage]))
-                    \. '</a>'
+            if s:locationPercent
+                let keyword = '<a class="keywordsNavKeyword currentKeyword" '
+                        \. 'href="entry://' . keyword . '">'
+                        \. keyword . " "
+                        \. printf("%.0f%%", (keywordCount + 1) * 100.0
+                        \/len(s:keywordsDict[a:currentPage]))
+                        \. '</a>'
+            else
+                let keyword = '<a class="keywordsNavKeyword currentKeyword" '
+                        \. 'href="entry://' . keyword . '">'
+                        \. keyword
+                        \. '</a>'
+            endif
         else
             let keyword = '<a class="keywordsNavKeyword" '
                             \. 'href="entry://' . keyword . '">'
@@ -222,78 +240,157 @@ function! KeywordsNav(currentPage, currentWord)
         endif
         let keywordCount = keywordCount + 1
     endfor
-    let keywordsNav = '<div class="keywordsNav">' . keywordsNav . '</div>'
+    " //////距本页最近的前一个词条
+    let currentPage = str2nr(a:currentPage)
+    let cidx = index(s:pageList, currentPage)
+    let firstPage = s:pageList[0]
+    let nearestPrePage = get(s:pageList, cidx-1, s:pageList[-1])
+    if nearestPrePage >= firstPage
+        while len(s:keywordsDict[nearestPrePage]) == 0
+            let nearestPreidx = index(s:pageList, nearestPrePage)
+            " 最后一个参数，可实现循环处理
+            let nearestPrePage = get(s:pageList, nearestPreidx-1,  s:pageList[-1])
+            " 若穷尽页面也没有词条，则输出空
+            if nearestPrePage == currentPage
+                break
+            endif
+        endwhile
+        if len(s:keywordsDict[nearestPrePage]) > 0
+            let nearestPreKeyword = s:keywordsDict[nearestPrePage][-1]
+            let nearestPreKeyword = '<a class="keywordsNavKeyword" '
+                            \. 'href="entry://' . nearestPreKeyword . '">'
+                            \. '<<<</a>'
+        else
+            let nearestPreKeyword = ''
+        endif
+    else
+        let nearestPreKeyword = ''
+    endif
+    " //////距本页最近的后一个词条
+    let lastPage = s:pageList[-1]
+    let nearestNextPage = get(s:pageList, cidx+1, s:pageList[0])
+    if nearestNextPage <= lastPage
+        while len(s:keywordsDict[nearestNextPage]) == 0
+            let nearestNextidx = index(s:pageList, nearestNextPage)
+            " 最后一个参数，可实现循环处理
+            let nearestNextPage = get(s:pageList, nearestNextidx+1, s:pageList[0])
+            " 若穷尽页面也没有词条，则输出空
+            if nearestNextPage == currentPage
+                break
+            endif
+        endwhile
+        if len(s:keywordsDict[nearestNextPage]) > 0
+            let nearestNextKeyword = s:keywordsDict[nearestNextPage][0]
+            let nearestNextKeyword = '<a class="keywordsNavKeyword" '
+                            \. 'href="entry://' . nearestNextKeyword . '">'
+                            \. '>>></a>'
+        else
+            let nearestNextKeyword = ''
+        endif
+    else
+        let nearestNextKeyword = ''
+    endif
+    " //////拼接导航词条
+    if s:nearestKeyword == 1
+        let keywordsNav = '<div class="keywordsNav">'
+                        \. nearestPreKeyword . keywordsNav . nearestNextKeyword
+                        \. '</div>'
+    else
+        let keywordsNav = '<div class="keywordsNav">'
+                        \. keywordsNav
+                        \. '</div>'
+    endif
     return keywordsNav
 endfunction
 
-" 将标准化input词条转为页面导航源文件格式 ---------------------------------{{{1
-if s:KeywordsNavStyle == 0
-    " 自身没有页面和keywords导航，仅转LINK
-    for currentPage in s:pageList
-        for currentKeyword in s:keywordsDict[currentPage]
-            silent! let @k = currentKeyword . "\n"
-                \. '@@@LINK=' . s:picNamePrefix . printf("%04d", currentPage) . "\n"
-                \. '</>'
-            silent! $put k
+" 根据sourceStyle和NavStyle输出标准的mdx源文件格式 ---------------------------------{{{1
+if s:sourceStyle == 0 || s:sourceStyle == 1 || s:sourceStyle == 2
+    " 运行初始化函数
+    silent! call StandardizeStyle(s:sourceStyle)
+    silent! call PageList()
+    silent! call KeywordsDicts()
+    " 清空全文
+    silent! normal! ggdG
+    " 将标准化词条转为标准的mdx源文件格式
+    if s:navStyle == 0
+        " 自身没有页面和keywords导航，仅转LINK
+        for currentPage in s:pageList
+            for currentKeyword in s:keywordsDict[currentPage]
+                silent! let @k = currentKeyword . "\n"
+                    \. '@@@LINK=' . s:picNamePrefix
+                    \. printf(s:pageNumDigit, currentPage) . "\n"
+                    \. '</>'
+                silent! $put k
+            endfor
         endfor
-    endfor
-elseif s:KeywordsNavStyle == 1
-    " 仅有页面导航，无keywords导航，简洁
-    for currentPage in s:pageList
-        silent! let @p = s:picNamePrefix . printf("%04d", currentPage) . "\n"
-            \. '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
-            \. '<div class="NavTop">'
-            \. CustomNav(s:customNavList)
-            \. PagesNav(currentPage, s:picNamePrefix)
-            \. '</div>'
-            \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
-            \. printf("%04d", currentPage) . s:picFormat . '" /></div>'
-            \. '<div class="NavBottom">'
-            \. PagesNav(currentPage, s:picNamePrefix)
-            \. "</div>\n"
-            \. '</>'
-        silent! $put p
-        for currentKeyword in s:keywordsDict[currentPage]
-            silent! let @k = currentKeyword . "\n"
-                \. '@@@LINK=' . s:picNamePrefix . printf("%04d", currentPage) . "\n"
-                \. '</>'
-            silent! $put k
-        endfor
-    endfor
-elseif s:KeywordsNavStyle == 2
-    " 不仅有页面导航，而且有keywords导航
-    for currentPage in s:pageList
-        silent! let @p = s:picNamePrefix . printf("%04d", currentPage) . "\n"
-            \. '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
-            \. '<div class="NavTop">'
-            \. CustomNav(s:customNavList)
-            \. PagesNav(currentPage, s:picNamePrefix)
-            \. KeywordsNav(currentPage, "")
-            \. '</div>'
-            \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
-            \. printf("%04d", currentPage) . s:picFormat . '" /></div>'
-            \. '<div class="NavBottom">'
-            \. PagesNav(currentPage, s:picNamePrefix)
-            \. "</div>\n"
-            \. '</>'
-        silent! $put p
-        for currentKeyword in s:keywordsDict[currentPage]
-            silent! let @k = currentKeyword . "\n"
+    elseif s:navStyle == 1
+        " 仅有页面导航，无keywords导航，简洁
+        for currentPage in s:pageList
+            silent! let @p = s:picNamePrefix
+                \. printf(s:pageNumDigit, currentPage) . "\n"
                 \. '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
                 \. '<div class="NavTop">'
                 \. CustomNav(s:customNavList)
                 \. PagesNav(currentPage, s:picNamePrefix)
-                \. KeywordsNav(currentPage, currentKeyword)
                 \. '</div>'
                 \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
-                \. printf("%04d", currentPage) . s:picFormat . '" /></div>'
+                \. printf(s:pageNumDigit, currentPage)
+                \. s:picFormat . '" /></div>'
                 \. '<div class="NavBottom">'
                 \. PagesNav(currentPage, s:picNamePrefix)
                 \. "</div>\n"
                 \. '</>'
-            silent! $put k
+            silent! $put p
+            for currentKeyword in s:keywordsDict[currentPage]
+                silent! let @k = currentKeyword . "\n"
+                    \. '@@@LINK=' . s:picNamePrefix
+                    \. printf(s:pageNumDigit, currentPage)
+                    \. "\n". '</>'
+                silent! $put k
+            endfor
         endfor
-    endfor
+    elseif s:navStyle == 2
+        " 不仅有页面导航，而且有keywords导航
+        for currentPage in s:pageList
+            silent! let @p = s:picNamePrefix
+                \. printf(s:pageNumDigit, currentPage) . "\n"
+                \. '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
+                \. '<div class="NavTop">'
+                \. CustomNav(s:customNavList)
+                \. PagesNav(currentPage, s:picNamePrefix)
+                \. KeywordsNav(currentPage, "")
+                \. '</div>'
+                \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
+                \. printf(s:pageNumDigit, currentPage)
+                \. s:picFormat . '" /></div>'
+                \. '<div class="NavBottom">'
+                \. PagesNav(currentPage, s:picNamePrefix)
+                \. "</div>\n"
+                \. '</>'
+            silent! $put p
+            for currentKeyword in s:keywordsDict[currentPage]
+                silent! let @k = currentKeyword . "\n"
+                    \. '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
+                    \. '<div class="NavTop">'
+                    \. CustomNav(s:customNavList)
+                    \. PagesNav(currentPage, s:picNamePrefix)
+                    \. KeywordsNav(currentPage, currentKeyword)
+                    \. '</div>'
+                    \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
+                    \. printf(s:pageNumDigit, currentPage)
+                    \. s:picFormat . '" /></div>'
+                    \. '<div class="NavBottom">'
+                    \. PagesNav(currentPage, s:picNamePrefix)
+                    \. "</div>\n"
+                    \. '</>'
+                silent! $put k
+            endfor
+        endfor
+    else
+        echomsg "请定义 NavStyle " . s:NavStyle . " 的处理方案"
+    endif
+else
+    echomsg "请定义 SourceStyle " . s:sourceStyle . " 的处理方案"
 endif
 
 " 将输出结果保存到mdxSource  ----------------------------------------------{{{1
