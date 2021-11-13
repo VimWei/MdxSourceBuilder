@@ -26,7 +26,7 @@ let s:mdxSourceFileName = "火星词典.txt"
 " CSS名称，其具体定义请查阅 MdxSourceBuilderCSS.vim
 let g:CSSName = "MarsDict.css"
 
-" 页码位数(图片名、页码等处使用，不足以0补全)，>=3
+" 词条/图片名等的页码位数，默认为4，支持3及以上
 let g:pageNumDigit = 4
 
 " 词典模块及其配置信息，格式如下：
@@ -47,7 +47,6 @@ let g:dictionaryParts = [
 " - 0：'一行页码 + 多行关键词（每行一个关键词）'的标准词条格式，跳转至页码
 " - 1：'一个页码 + 多个中文单字符的关键词'的压缩词条格式，跳转至页码
 " - 2：'页码 + 分隔符 + 单个中或英关键词'的啰嗦行格式，跳转至页码
-" pageNumDigit：（词条/图片名等）的页码位数，默认为4，支持3及以上
 " navStyle：定义个性化的词条导航样式（MdxSourceBuilderCore.Vim）
 " - 0：自身没有页面和keywords导航，仅转LINK，适用于拼音之类的辅助检索
 " - 1：仅有页面导航，无keywords导航，简洁，适用于封面/附录之类的Affix
