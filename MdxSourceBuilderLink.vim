@@ -1,6 +1,6 @@
 " 读取词典参数 ------------------------------------------------------------{{{1
 let s:CSSName = g:CSSName
-let s:pageNumDigit = '%0'. dictionaryPart[4] . 'd'
+let s:pageNumDigit = '%0'. g:pageNumDigit . 'd'
 let s:sourceStyle = anyMoreSource[1]
 let s:pagePrefix = anyMoreSource[2]
 

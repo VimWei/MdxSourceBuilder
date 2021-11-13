@@ -4,10 +4,10 @@ let s:customNavList = g:customNavList
 let s:picNamePrefix = dictionaryPart[1]
 let s:picFormat = dictionaryPart[2]
 let s:sourceStyle = dictionaryPart[3]
-let s:pageNumDigit = '%0'. dictionaryPart[4] . 'd'
-let s:navStyle = dictionaryPart[5]
-let s:locationPercent = dictionaryPart[6]
-let s:nearestKeyword = dictionaryPart[7]
+let s:pageNumDigit = '%0'. g:pageNumDigit . 'd'
+let s:navStyle = dictionaryPart[4]
+let s:locationPercent = dictionaryPart[5]
+let s:nearestKeyword = dictionaryPart[6]
 
 " 初始化及通用函数定义 ----------------------------------------------------{{{1
 " 清理并保存，以便后续代码可以正常运作

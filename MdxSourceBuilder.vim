@@ -26,17 +26,19 @@ let s:mdxSourceFileName = "火星词典.txt"
 " CSS名称，其具体定义请查阅 MdxSourceBuilderCSS.vim
 let g:CSSName = "MarsDict.css"
 
+" 页码位数(图片名、页码等处使用，不足以0补全)，>=3
+let g:pageNumDigit = 4
+
 " 词典模块及其配置信息，格式如下：
 " \[dictionaryPart, picNamePrefix, picFormat,
-" \sourceStyle, pageNumDigit,
-" \navStyle, locationPercent, nearestKeyword],
+" \sourceStyle, navStyle, locationPercent, nearestKeyword],
 let g:dictionaryParts = [
-        \["火星词典.Cover.txt", "MarsDictCover_", ".png", 0, 4, 1, 0, 1],
-        \["火星词典.Prefix.txt", "MarsDictPrefix_", ".png", 0, 4, 1, 0, 1],
-        \["火星词典.Body.Part1.txt", "MarsDict_", ".png", 0, 4, 2, 1, 1],
-        \["火星词典.Body.Part2.txt", "MarsDict_", ".png", 1, 4, 2, 1, 1],
-        \["火星词典.Appendix.txt", "MarsDictAppendix_", ".png", 0, 4, 1, 0, 1],
-        \["火星词典.Pinyin.txt", "MarsDict_", ".png", 2, 4, 0, 0, 0],
+        \["火星词典.Cover.txt", "MarsDictCover_", ".png", 0, 1, 0, 1],
+        \["火星词典.Prefix.txt", "MarsDictPrefix_", ".png", 0, 1, 0, 1],
+        \["火星词典.Body.Part1.txt", "MarsDict_", ".png", 0, 2, 1, 1],
+        \["火星词典.Body.Part2.txt", "MarsDict_", ".png", 1, 2, 1, 1],
+        \["火星词典.Appendix.txt", "MarsDictAppendix_", ".png", 0, 1, 0, 1],
+        \["火星词典.Pinyin.txt", "MarsDict_", ".png", 2, 0, 0, 0],
         \]
 " dictionaryPart：词典各个模块的词条文件名称
 " picNamePrefix：图片前缀名，不同词典模块通常会采用不同的前缀名
@@ -202,15 +204,6 @@ silent! set nobomb
 silent! set fileencoding=utf-8
 
 let g:mdxSource = ""
-for dictionaryPart in g:dictionaryParts
-    echomsg "正在处理：" . substitute(dictionaryPart[0], ".txt", "", "")
-    silent! 0,$d
-    silent! exe "read ". dictionaryPart[0]
-    silent! 0d
-    source MdxSourceBuilderCore.vim
-    silent! 0,$d
-endfor
-
 " 补充更多的Mdx源文件
 if s:anyMore == 1
     for anyMoreSource in g:anyMoreSources
@@ -222,6 +215,15 @@ if s:anyMore == 1
         silent! 0,$d
     endfor
 endif
+" 图片词典正文部分
+for dictionaryPart in g:dictionaryParts
+    echomsg "正在处理：" . substitute(dictionaryPart[0], ".txt", "", "")
+    silent! 0,$d
+    silent! exe "read ". dictionaryPart[0]
+    silent! 0d
+    source MdxSourceBuilderCore.vim
+    silent! 0,$d
+endfor
 
 echomsg "正在生成 MdxSource 文件……"
 let @x = g:mdxSource
