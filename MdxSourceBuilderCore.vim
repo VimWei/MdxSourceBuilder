@@ -46,9 +46,33 @@ function! StandardizeStyle(sourceStyle)
         " 0002    abandonee
         " 0002    a bas
         " 0003    abdominous
-        normal gg
         " 将所有Tab替换为空格
         silent! set expandtab tabstop=4 | %retab
+        normal gg
+        let linenumber = printf(s:pageNumDigit, 0)
+        for line in getline(1,'$')
+            let words = split(line, '\s\{4,}')
+            if linenumber == words[0]
+                silent! s/^.*$/\= words[1]/e
+            else
+                let linenumber = words[0]
+                silent! s/^.*$/\= words[0] . "\n". get(words, 1, "")/e
+            endif
+            silent! normal j
+        endfor
+    elseif s:sourceStyle == 3
+        " 适合如下词条格式：行格式为"单个中或英关键词 + 分隔符 + 页码"
+        " 分隔符兼容：Tab键'\t', 4个及以上空格'\s\{4,}'
+        " abandon    0001
+        " abandoned    0001
+        " abandonee    0002
+        " a bas    0002
+        " abdominous    0003
+        " 将所有Tab替换为空格
+        silent! set expandtab tabstop=4 | %retab
+        " 将格式转为sourceStyle 2
+        silent! %s/^\(.\{-}\)\s\{4,}\(\d\{3,}\)$/\2    \1/
+        normal gg
         let linenumber = printf(s:pageNumDigit, 0)
         for line in getline(1,'$')
             let words = split(line, '\s\{4,}')
@@ -61,7 +85,7 @@ function! StandardizeStyle(sourceStyle)
             silent! normal j
         endfor
     else
-        " echomsg "未定义处理方案"
+        echomsg "警告！未定义 SourceStyle " . a:sourceStyle . " 的标准化方案！"
     endif
     " 清理并保存，以便后续代码可以正常运作
     silent! normal! Go
@@ -304,7 +328,7 @@ function! KeywordsNav(currentPage, currentWord)
 endfunction
 
 " 根据sourceStyle和NavStyle输出标准的mdx源文件格式 ---------------------------------{{{1
-if s:sourceStyle == 0 || s:sourceStyle == 1 || s:sourceStyle == 2
+if index([0,1,2,3], s:sourceStyle) >= 0
     " 运行初始化函数
     silent! call StandardizeStyle(s:sourceStyle)
     silent! call PageList()

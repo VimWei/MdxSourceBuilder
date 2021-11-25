@@ -33,10 +33,11 @@ let g:pageNumDigit = 4
 " \[dictionaryPart, picNamePrefix, picFormat,
 " \sourceStyle, navStyle, locationPercent, nearestKeyword],
 let g:dictionaryParts = [
-        \["火星词典.Cover.txt", "MarsDictCover_", ".png", 0, 1, 0, 1],
-        \["火星词典.Prefix.txt", "MarsDictPrefix_", ".png", 0, 1, 0, 1],
+        \["火星词典.Cover.txt", "MarsDictCover_", ".png", 0, 2, 0, 1],
+        \["火星词典.Prefix.txt", "MarsDictPrefix_", ".png", 0, 2, 0, 1],
         \["火星词典.Body.Part1.txt", "MarsDict_", ".png", 0, 2, 1, 1],
         \["火星词典.Body.Part2.txt", "MarsDict_", ".png", 1, 2, 1, 1],
+        \["火星词典.Body.Part3.txt", "MarsDict_", ".png", 3, 2, 1, 1],
         \["火星词典.Appendix.txt", "MarsDictAppendix_", ".png", 0, 1, 0, 1],
         \["火星词典.Pinyin.txt", "MarsDict_", ".png", 2, 0, 0, 0],
         \]
@@ -47,6 +48,7 @@ let g:dictionaryParts = [
 " - 0：'一行页码 + 多行关键词（每行一个关键词）'的标准词条格式，跳转至页码
 " - 1：'一个页码 + 多个中文单字符的关键词'的压缩词条格式，跳转至页码
 " - 2：'页码 + 分隔符 + 单个中或英关键词'的啰嗦行格式，跳转至页码
+" - 3：'单个中或英关键词 + 分隔符 + 页码'的啰嗦行格式，跳转至页码
 " navStyle：定义个性化的词条导航样式（MdxSourceBuilderCore.Vim）
 " - 0：自身没有页面和keywords导航，仅转LINK，适用于拼音之类的辅助检索
 " - 1：仅有页面导航，无keywords导航，简洁，适用于封面/附录之类的Affix
@@ -62,13 +64,13 @@ let g:dictionaryParts = [
 let s:anyMore = 1
 " 格式：\[anyMorePart, sourceStyle, pagePrefix],
 let g:anyMoreSources = [
-        \["火星词典.Link1.txt", 4, ""],
-        \["火星词典.Link2.txt", 5, "OPEU3_"],
+        \["火星词典.Link1.txt", 104, ""],
+        \["火星词典.Link2.txt", 105, "MarsDict_"],
         \["火星词典.Link3.txt", 998, ""],
-        \["火星词典.Link4.txt", 7, ""],
-        \["火星词典.Link5.txt", 6, "OPEU3Pre_"],
+        \["火星词典.Link4.txt", 107, ""],
+        \["火星词典.Link5.txt", 106, "MarsDictPrefix_"],
         \["火星词典.Link6.txt", 998, ""],
-        \["火星词典.Link7.txt", 0, "OPEU3_"],
+        \["火星词典.Link7.txt", 0, "MarsDict_"],
         \["火星词典.Link888.txt", 888, ""],
         \]
 " anyMorePart：源文件的名称，包括后缀名
@@ -76,11 +78,12 @@ let g:anyMoreSources = [
 " - 0：固定项目，'一行页码 + 多行关键词（每行一个关键词）'的标准词条格式
 " - 1：固定项目，'一个页码 + 多个中文单字符的关键词'的压缩词条格式
 " - 2：固定项目，'页码 + 分隔符 + 单个中或英关键词'的啰嗦行格式
+" - 3：固定项目，'单个中或英关键词 + 分隔符 + 页码'的啰嗦行格式
 " - 888: 固定项目，用于快速手工添加链接词条，"现有关键词\t链接词条"
 " - 998: 固定项目，源文件为标准的mdx源格式，但欠缺CSS文件等必要元素
 " - 999：固定项目，源文件为标准的mdx源格式，无需进一步处理，直接使用
-" - 其他: 定制化项目，自定义词条样式及处理程序
-" pagePrefix：可选；但当sourceStyle为0/1/2时，必须配置
+" - 其他: 定制化项目，自定义词条样式及处理程序，建议用101-199以示区别
+" pagePrefix：按需可选；但当sourceStyle为0/1/2/3时，必须配置
 
 " 自定义固定链接的导航：\[链接名称, 链接目标],
 let g:customNavList = [
