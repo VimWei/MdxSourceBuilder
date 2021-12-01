@@ -1,13 +1,10 @@
 " 读取词典参数 ------------------------------------------------------------{{{1
 let s:CSSName = g:CSSName
-let s:customNavList = g:customNavList
-let s:picNamePrefix = dictionaryPart[1]
-let s:picFormat = dictionaryPart[2]
-let s:sourceStyle = dictionaryPart[3]
 let s:pageNumDigit = '%0'. g:pageNumDigit . 'd'
-let s:navStyle = dictionaryPart[4]
-let s:locationPercent = dictionaryPart[5]
-let s:nearestKeyword = dictionaryPart[6]
+let s:customNavList = g:customNavList
+let s:picNamePrefix = g:multiLevelParts[1]
+let s:picFormat = g:multiLevelParts[2]
+let s:navStyle =  g:multiLevelParts[3]
 
 " 初始化及通用函数定义 ----------------------------------------------------{{{1
 " 清理并保存，以便后续代码可以正常运作
@@ -94,13 +91,44 @@ function! StandardizeStyle(sourceStyle)
     silent! w!
 endfunction
 
+function! StandardizeMultiFiles()
+    let i = 0
+    let s:multiFileStd = {}
+    for multiFile in g:multiLevelParts[0]
+        " 读取每个文件
+        silent! exe "$read ". multiFile[0]
+        let sourceStyle = multiFile[1]
+        " 标准化每个文件
+        silent! call StandardizeStyle(sourceStyle)
+        " 将每个文件都存入字典 s:multiFileStd
+        let s:multiFileStd[i] = getline(1, "$")
+        silent! %delete
+        let i += 1
+    endfor
+    return s:multiFileStd
+    " 监测：输出变量
+    " echomsg s:multiFileStd
+    " silent! call append('$', s:multiFileStd)
+    " silent! call append('$', s:multiFileStd[0])
+    " for i in keys(s:multiFileStd)
+    "     silent! call append('$', s:multiFileStd[i])
+    " endfor
+endfunction
+
 function! PageList()
+    silent! %delete
+    for i in keys(s:multiFileStd)
+        " 加载已经标准化的multiFileStd
+        silent! call append('$', s:multiFileStd[i])
+    endfor
     " 创建、排序、去重 pageList
     let s:pageList = []
     global/^\d\{3,}$/call add(s:pageList, str2nr(getline('.')))
     let s:pageList = uniq(sort(s:pageList,'n'))
     return s:pageList
+    " 监测：输出变量
     " echomsg s:pageList
+    " silent! call append('$', s:pageList)
 endfunction
 
 function! KeywordsDict()
@@ -131,10 +159,30 @@ function! KeywordsDict()
 endfunction
 
 function! KeywordsDicts()
-    let s:keywordsDict = {}
-    silent! vimgrep /^\d\{3,}$/ %
-    silent! cdo call KeywordsDict()
-    " echomsg s:keywordsDict
+    silent! %delete
+    let s:fileKeywordsDict = {}
+    for i in keys(s:multiFileStd)
+        " 加载已经标准化的multiFileStd
+        silent! call append('$', s:multiFileStd[i])
+        " 清理并保存，以便后续代码可以正常运作
+        silent! global/^$/d
+        silent! w!
+        " 输出每个文件的keywordsDict
+        let s:keywordsDict = {}
+        silent! vimgrep /^\d\{3,}$/ %
+        silent! cdo call KeywordsDict()
+        " 合并为multiFile的keywordsDict
+        let s:fileKeywordsDict[i] = s:keywordsDict
+        silent! %delete
+    endfor
+    return s:fileKeywordsDict
+    " 监测：输出变量
+    " echomsg s:fileKeywordsDict
+    " silent! call append('$', s:fileKeywordsDict)
+    " silent! call append('$', s:fileKeywordsDict[0])
+    " for i in keys(s:fileKeywordsDict)
+    "     silent! call append('$', s:fileKeywordsDict[i])
+    " endfor
 endfunction
 
 function! CustomNav(customNavList)
@@ -236,116 +284,153 @@ endfunction
 
 function! KeywordsNav(currentPage, currentWord)
     " 输出关键字导航
-    let keywordsNav = ""
-    let keywordCount = 0
-    for keyword in s:keywordsDict[a:currentPage]
-        if keyword == a:currentWord
-            if s:locationPercent
-                let keyword = '<a class="keywordsNavKeyword currentKeyword" '
-                        \. 'href="entry://' . keyword . '">'
-                        \. keyword . " "
-                        \. printf("%.0f%%", (keywordCount + 1) * 100.0
-                        \/len(s:keywordsDict[a:currentPage]))
-                        \. '</a>'
-            else
-                let keyword = '<a class="keywordsNavKeyword currentKeyword" '
-                        \. 'href="entry://' . keyword . '">'
-                        \. keyword
-                        \. '</a>'
-            endif
-        else
-            let keyword = '<a class="keywordsNavKeyword" '
+    let s:multiKeywordsNav = ""
+    for file in keys(s:fileKeywordsDict)
+        let keywordsNav = ""
+        let keywordCount = 0
+        let locationPercent = g:multiLevelParts[0][file][2]
+        let nearestKeyword = g:multiLevelParts[0][file][3]
+        for keyword in get(s:fileKeywordsDict[file], a:currentPage, [])
+            if keyword == a:currentWord
+                if locationPercent
+                    let keyword = '<a class="keywordsNavKeyword currentKeyword" '
                             \. 'href="entry://' . keyword . '">'
-                            \. keyword . '</a>'
-        endif
-        if keywordCount == 0
-            let keywordsNav = keyword
-        else
-            let keywordsNav = keywordsNav . ", " . keyword
-        endif
-        let keywordCount = keywordCount + 1
-    endfor
-    " //////距本页最近的前一个词条
-    let currentPage = str2nr(a:currentPage)
-    let cidx = index(s:pageList, currentPage)
-    let firstPage = s:pageList[0]
-    let nearestPrePage = get(s:pageList, cidx-1, s:pageList[-1])
-    if nearestPrePage >= firstPage
-        while len(s:keywordsDict[nearestPrePage]) == 0
-            let nearestPreidx = index(s:pageList, nearestPrePage)
-            " 最后一个参数，可实现循环处理
-            let nearestPrePage = get(s:pageList, nearestPreidx-1,  s:pageList[-1])
-            " 若穷尽页面也没有词条，则输出空
-            if nearestPrePage == currentPage
-                break
+                            \. keyword . " "
+                            \. printf("%.0f%%", (keywordCount + 1) * 100.0
+                            \/len(s:fileKeywordsDict[file][a:currentPage]))
+                            \. '</a>'
+                else
+                    let keyword = '<a class="keywordsNavKeyword currentKeyword" '
+                            \. 'href="entry://' . keyword . '">'
+                            \. keyword
+                            \. '</a>'
+                endif
+            else
+                let keyword = '<a class="keywordsNavKeyword" '
+                                \. 'href="entry://' . keyword . '">'
+                                \. keyword . '</a>'
             endif
-        endwhile
-        if len(s:keywordsDict[nearestPrePage]) > 0
-            let nearestPreKeyword = s:keywordsDict[nearestPrePage][-1]
-            let nearestPreKeyword = '<a class="keywordsNavKeyword" '
-                            \. 'href="entry://' . nearestPreKeyword . '">'
-                            \. '<<<</a>'
+            if keywordCount == 0
+                let keywordsNav = keyword
+            else
+                let keywordsNav = keywordsNav . ", " . keyword
+            endif
+            let keywordCount = keywordCount + 1
+        endfor
+        " //////距本页最近的前一个词条
+        let currentPage = str2nr(a:currentPage)
+        let cidx = index(s:pageList, currentPage)
+        let firstPage = s:pageList[0]
+        let nearestPrePage = get(s:pageList, cidx-1, s:pageList[-1])
+        if nearestPrePage >= firstPage
+            while len(get(s:fileKeywordsDict[file], nearestPrePage, [])) == 0
+                let nearestPreidx = index(s:pageList, nearestPrePage)
+                " 最后一个参数，可实现循环处理
+                let nearestPrePage = get(s:pageList, nearestPreidx-1,  s:pageList[-1])
+                " 若穷尽页面也没有词条，则输出空
+                if nearestPrePage == currentPage
+                    break
+                endif
+            endwhile
+            if len(get(s:fileKeywordsDict[file], nearestPrePage, [])) > 0
+                let nearestPreKeyword = s:fileKeywordsDict[file][nearestPrePage][-1]
+                let nearestPreKeyword = '<a class="keywordsNavKeyword" '
+                                \. 'href="entry://' . nearestPreKeyword . '">'
+                                \. '<<<</a>'
+            else
+                let nearestPreKeyword = ''
+            endif
         else
             let nearestPreKeyword = ''
         endif
-    else
-        let nearestPreKeyword = ''
-    endif
-    " //////距本页最近的后一个词条
-    let lastPage = s:pageList[-1]
-    let nearestNextPage = get(s:pageList, cidx+1, s:pageList[0])
-    if nearestNextPage <= lastPage
-        while len(s:keywordsDict[nearestNextPage]) == 0
-            let nearestNextidx = index(s:pageList, nearestNextPage)
-            " 最后一个参数，可实现循环处理
-            let nearestNextPage = get(s:pageList, nearestNextidx+1, s:pageList[0])
-            " 若穷尽页面也没有词条，则输出空
-            if nearestNextPage == currentPage
-                break
+        " //////距本页最近的后一个词条
+        let lastPage = s:pageList[-1]
+        let nearestNextPage = get(s:pageList, cidx+1, s:pageList[0])
+        if nearestNextPage <= lastPage
+            while len(get(s:fileKeywordsDict[file], nearestNextPage, [])) == 0
+                let nearestNextidx = index(s:pageList, nearestNextPage)
+                " 最后一个参数，可实现循环处理
+                let nearestNextPage = get(s:pageList, nearestNextidx+1, s:pageList[0])
+                " 若穷尽页面也没有词条，则输出空
+                if nearestNextPage == currentPage
+                    break
+                endif
+            endwhile
+            if len(get(s:fileKeywordsDict[file], nearestNextPage, [])) > 0
+                let nearestNextKeyword = s:fileKeywordsDict[file][nearestNextPage][0]
+                let nearestNextKeyword = '<a class="keywordsNavKeyword" '
+                                \. 'href="entry://' . nearestNextKeyword . '">'
+                                \. '>>></a>'
+            else
+                let nearestNextKeyword = ''
             endif
-        endwhile
-        if len(s:keywordsDict[nearestNextPage]) > 0
-            let nearestNextKeyword = s:keywordsDict[nearestNextPage][0]
-            let nearestNextKeyword = '<a class="keywordsNavKeyword" '
-                            \. 'href="entry://' . nearestNextKeyword . '">'
-                            \. '>>></a>'
         else
             let nearestNextKeyword = ''
         endif
-    else
-        let nearestNextKeyword = ''
-    endif
-    " //////拼接导航词条
-    if s:nearestKeyword == 1
-        let keywordsNav = '<div class="keywordsNav">'
-                        \. nearestPreKeyword . keywordsNav . nearestNextKeyword
-                        \. '</div>'
-    else
-        let keywordsNav = '<div class="keywordsNav">'
-                        \. keywordsNav
-                        \. '</div>'
-    endif
-    return keywordsNav
+        " //////拼接导航词条
+        if nearestKeyword == 1
+            let keywordsNav = '<div class="keywordsNav' . file . '">'
+                            \. nearestPreKeyword . keywordsNav . nearestNextKeyword
+                            \. '</div>'
+        else
+            let keywordsNav = '<div class="keywordsNav' . file . '">'
+                            \. keywordsNav
+                            \. '</div>'
+        endif
+        let s:multiKeywordsNav = s:multiKeywordsNav . keywordsNav
+    endfor
+    let s:multiKeywordsNav = '<div class="keywordsNav">'
+                            \. s:multiKeywordsNav
+                            \. '</div>'
+    return s:multiKeywordsNav
 endfunction
 
 " 根据sourceStyle和NavStyle输出标准的mdx源文件格式 ---------------------------------{{{1
-if index([0,1,2,3], s:sourceStyle) >= 0
-    " 运行初始化函数
-    silent! call StandardizeStyle(s:sourceStyle)
+
+" 是否所有层级文件的sourceStyle都在指定范围内 -----------------------------{{{2
+" 若所有文件的sourceStyle都在列表范围内，则为1，否则为0
+function! MultiSourceStyle(sourceStyleList)
+    for multiFile in g:multiLevelParts[0]
+        let sourceStyle = multiFile[1]
+        if index(a:sourceStyleList, sourceStyle) >= 0
+            " 若sourceStyle在sourceStyleList列表范围之内，则为1
+            let multiSourceStyle = 1
+        else
+            " 只要有一个未在列表范围内，则为0
+            let multiSourceStyle = 0
+            break
+        endif
+    endfor
+    return multiSourceStyle
+endfunction
+
+if MultiSourceStyle([0,1,2,3]) == 1
+    " 运行初始化函数  ---------------------------------------------------{{{2
+    " 标准化词条，并存入 s:multiFileStd 字典
+    " 创建标准化后的文件字典 s:multiFileStd
+    silent! call StandardizeMultiFiles()
+    " 创建合并multiFile的PageList
     silent! call PageList()
+    " 创建分层级的 s:fileKeywordsDict
     silent! call KeywordsDicts()
+    " for i in keys(s:fileKeywordsDict)
+    "     silent! call append('$', s:fileKeywordsDict[i])
+    " endfor
+
     " 清空全文
     silent! %delete
     " 将标准化词条转为标准的mdx源文件格式
     if s:navStyle == 0
         " 自身没有页面和keywords导航，仅转LINK
         for currentPage in s:pageList
-            for currentKeyword in s:keywordsDict[currentPage]
-                silent! let s:navStyleZero = [currentKeyword
-                    \, '@@@LINK=' . s:picNamePrefix
-                    \. printf(s:pageNumDigit, currentPage)
-                    \, '</>']
-                silent! call append('$', s:navStyleZero)
+            for file in keys(s:fileKeywordsDict)
+                for currentKeyword in get(s:fileKeywordsDict[file],currentPage,[])
+                    silent! let s:navStyleZero = [currentKeyword
+                        \, '@@@LINK=' . s:picNamePrefix
+                        \. printf(s:pageNumDigit, currentPage)
+                        \, '</>']
+                    silent! call append('$', s:navStyleZero)
+                endfor
             endfor
         endfor
     elseif s:navStyle == 1
@@ -366,12 +451,14 @@ if index([0,1,2,3], s:sourceStyle) >= 0
                 \. "</div>"
                 \, '</>']
             silent! call append('$', s:navStyleOne)
-            for currentKeyword in s:keywordsDict[currentPage]
-                silent! let s:navStyleZero = [currentKeyword
-                    \, '@@@LINK=' . s:picNamePrefix
-                    \. printf(s:pageNumDigit, currentPage)
-                    \, '</>']
-                silent! call append('$', s:navStyleZero)
+            for file in keys(s:fileKeywordsDict)
+                for currentKeyword in get(s:fileKeywordsDict[file],currentPage,[])
+                    silent! let s:navStyleZero = [currentKeyword
+                        \, '@@@LINK=' . s:picNamePrefix
+                        \. printf(s:pageNumDigit, currentPage)
+                        \, '</>']
+                    silent! call append('$', s:navStyleZero)
+                endfor
             endfor
         endfor
     elseif s:navStyle == 2
@@ -393,22 +480,24 @@ if index([0,1,2,3], s:sourceStyle) >= 0
                 \. "</div>"
                 \, '</>']
             silent! call append('$', s:navStyleTwo)
-            for currentKeyword in s:keywordsDict[currentPage]
-                silent! let s:navStyleOne = [currentKeyword
-                    \, '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
-                    \. '<div class="NavTop">'
-                    \. CustomNav(s:customNavList)
-                    \. PagesNav(currentPage, s:picNamePrefix)
-                    \. KeywordsNav(currentPage, currentKeyword)
-                    \. '</div>'
-                    \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
-                    \. printf(s:pageNumDigit, currentPage)
-                    \. s:picFormat . '" /></div>'
-                    \. '<div class="NavBottom">'
-                    \. PagesNav(currentPage, s:picNamePrefix)
-                    \. "</div>"
-                    \, '</>']
-                silent! call append('$', s:navStyleOne)
+            for file in keys(s:fileKeywordsDict)
+                for currentKeyword in get(s:fileKeywordsDict[file],currentPage,[])
+                    silent! let s:navStyleOne = [currentKeyword
+                        \, '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
+                        \. '<div class="NavTop">'
+                        \. CustomNav(s:customNavList)
+                        \. PagesNav(currentPage, s:picNamePrefix)
+                        \. KeywordsNav(currentPage, currentKeyword)
+                        \. '</div>'
+                        \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
+                        \. printf(s:pageNumDigit, currentPage)
+                        \. s:picFormat . '" /></div>'
+                        \. '<div class="NavBottom">'
+                        \. PagesNav(currentPage, s:picNamePrefix)
+                        \. "</div>"
+                        \, '</>']
+                    silent! call append('$', s:navStyleOne)
+                endfor
             endfor
         endfor
     else

@@ -7,6 +7,7 @@ let s:pagePrefix = anyMoreSource[2]
 " 初始化及通用函数定义 ----------------------------------------------------{{{1
 " 清理并保存，以便后续代码可以正常运作
 silent! normal! Go
+silent! global/^"/d
 silent! global/^$/d
 silent! w!
 
@@ -55,7 +56,7 @@ function! StandardizeStyle(sourceStyle)
             endif
             silent! normal j
         endfor
-    elseif s:sourceStyle == 3
+    elseif a:sourceStyle == 3
         " 适合如下词条格式：行格式为"单个中或英关键词 + 分隔符 + 页码"
         " 分隔符兼容：Tab键'\t', 4个及以上空格'\s\{4,}'
         " abandon    0001
@@ -138,15 +139,15 @@ if index([0,1,2,3], s:sourceStyle) >= 0
     silent! call PageList()
     silent! call KeywordsDicts()
     " 清空全文
-    silent! 0,$d
+    silent! %delete
     " 将标准化词条转为标准的mdx源文件格式
     for currentPage in s:pageList
         for currentKeyword in s:keywordsDict[currentPage]
-            silent! let @k = currentKeyword . "\n"
-                \. '@@@LINK=' . s:pagePrefix
-                \. printf(s:pageNumDigit, currentPage) . "\n"
-                \. '</>'
-            silent! $put k
+            silent! let s:atLink = [currentKeyword
+                \, '@@@LINK=' . s:pagePrefix
+                \. printf(s:pageNumDigit, currentPage)
+                \, '</>']
+            silent! call append('$', s:atLink)
         endfor
     endfor
 elseif s:sourceStyle == 104
@@ -163,14 +164,14 @@ elseif s:sourceStyle == 105
     for currentPage in s:pageList
         for currentKeyword in s:keywordsDict[currentPage]
             " 对currentKeyword进行特殊处理
-            silent! let @k = currentKeyword . "\n"
-                \. '@@@LINK=' . s:pagePrefix
-                \. printf(s:pageNumDigit, currentPage) . "\n"
-                \. '</>' . "\n"
-                \."s" . split(currentKeyword, '\s')[0] . "\n"
-                \. '@@@LINK=' . currentKeyword . "\n"
-                \. '</>'
-            silent! $put k
+            silent! let s:atLink = [currentKeyword
+                \, '@@@LINK=' . s:pagePrefix
+                \. printf(s:pageNumDigit, currentPage)
+                \, '</>'
+                \, "s" . split(currentKeyword, '\s')[0]
+                \, '@@@LINK=' . currentKeyword
+                \, '</>']
+            silent! call append('$', s:atLink)
         endfor
     endfor
 elseif s:sourceStyle == 106
@@ -185,22 +186,17 @@ elseif s:sourceStyle == 106
     silent! 0,$d
     for line in range(lineNumber)
         let lineList = lineDicts[line]
-        " 中link英
-        " silent! let @k = lineList[3] . "\n"
-        "     \. '@@@LINK=' . lineList[2] . "\n"
-        "     \. '</>'
-        " 中英混合全部link
-        silent! let @k = lineList[2] . "\n"
-            \. '@@@LINK=' . s:pagePrefix
-            \. lineList[0] . "\n"
-            \. '</>' . "\n"
-            \. lineList[1] . "\n"
-            \. '@@@LINK=' . lineList[2] . "\n"
-            \. '</>' . "\n"
-            \. lineList[3] . "\n"
-            \. '@@@LINK=' . lineList[2] . "\n"
-            \. '</>'
-        silent! $put k
+        silent! let s:atLink = [lineList[2]
+            \, '@@@LINK=' . s:pagePrefix
+            \. lineList[0]
+            \, '</>'
+            \, lineList[1]
+            \, '@@@LINK=' . lineList[2]
+            \, '</>'
+            \, lineList[3]
+            \, '@@@LINK=' . lineList[2]
+            \, '</>']
+        silent! call append('$', s:atLink)
     endfor
 elseif s:sourceStyle == 107
     " 添加编号链接
@@ -232,10 +228,10 @@ elseif s:sourceStyle == 888
     for line in range(lineNumber)
         let lineList = lineDicts[line]
         for dictKeyword in lineList[1:]
-            silent! let @k = dictKeyword . "\n"
-                        \. '@@@LINK=' . lineList[0] . "\n"
-                        \. '</>'
-            silent! $put k
+            silent! let s:atLink = [dictKeyword
+                        \, '@@@LINK=' . lineList[0]
+                        \, '</>']
+            silent! call append('$', s:atLink)
         endfor
     endfor
 elseif s:sourceStyle == 998
@@ -262,8 +258,7 @@ endif
 
 " 将输出结果保存到mdxSource  ----------------------------------------------{{{1
 silent! global/^$/d
-silent! normal! gg"xyG
-let g:mdxSource = g:mdxSource . @x
+let g:mdxSource = extend(g:mdxSource, getline(1, "$"))
 
 " Reference  --------------------------------------------------------------{{{1
 finish

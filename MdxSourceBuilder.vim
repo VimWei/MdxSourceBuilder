@@ -60,6 +60,17 @@ let g:dictionaryParts = [
 " - 0：不显示最近的前后词条，适合词条较多的情形
 " - 1：显示最近的前后词条，适合词条较少情形下的跨页跳转
 
+" 多层级词条
+let s:multiLevel = 0
+" \[dictionaryPart, sourceStyle, locationPercent, nearestKeyword],
+" \], picNamePrefix, picFormat, navStyle]
+let g:multiLevelParts = [[
+        \["LLOCE.Body.Title1.txt", 0, 0, 1],
+        \["LLOCE.Body.Title2.txt", 0, 0, 1],
+        \["LLOCE.Body.Title3.txt", 2, 0, 1],
+        \["LLOCE.Body.Detail.txt", 0, 1, 1],
+        \], "LLOCE_", ".png", 2]
+
 " 补充额外的mdx源文件，兼容多种风格的来源
 let s:anyMore = 1
 " 格式：\[anyMorePart, sourceStyle, pagePrefix],
@@ -152,7 +163,7 @@ if s:autoMdxPack == 1
     silent! set nobomb
     silent! set fileencoding=utf-8
     " 设置info.title.html文件为utf-8格式
-    silent! 0,$d
+    silent! %delete
     silent! exe "read "
             \. substitute(s:mdxSourceFileName, ".txt$", ".info.title.html", "")
     silent! 0d
@@ -166,7 +177,7 @@ if s:autoMdxPack == 1
             \. substitute(s:mdxSourceFileName, ".txt$", ".info.title.html", "")
     endtry
     " 设置info.description.html文件为utf-8格式
-    silent! 0,$d
+    silent! %delete
     silent! exe "read "
             \. substitute(s:mdxSourceFileName, ".txt$", ".info.description.html", "")
     silent! 0d
@@ -187,7 +198,7 @@ silent! set nobomb
 silent! set fileencoding=utf-8
 
 " 输出CSS文件：若已打开，则先关闭旧的，再保存新的
-silent! 0,$d
+silent! %delete
 silent! exe "read ". "MdxSourceBuilderCSS.vim"
 silent! 0d
 
@@ -197,7 +208,7 @@ catch
     silent! exe "bdelete! ". g:CSSName
     silent! exe "write! " . g:CSSName
 endtry
-silent! 0,$d
+silent! %delete
 echomsg "已输出CSS，请查阅：" . getcwd() . "\\" . g:CSSName
 
 " 输出MdxSource文件 -------------------------------------------------------{{{2
@@ -205,31 +216,40 @@ silent! set fileformat=dos
 silent! set nobomb
 silent! set fileencoding=utf-8
 
-let g:mdxSource = ""
+let g:mdxSource = []
 " 补充更多的Mdx源文件
 if s:anyMore == 1
     for anyMoreSource in g:anyMoreSources
         echomsg "正在处理：" . substitute(anyMoreSource[0], ".txt", "", "")
-        silent! 0,$d
+        silent! %delete
         silent! exe "read ". anyMoreSource[0]
         silent! 0d
         source MdxSourceBuilderLink.vim
-        silent! 0,$d
+        silent! %delete
     endfor
 endif
 " 图片词典正文部分
 for dictionaryPart in g:dictionaryParts
     echomsg "正在处理：" . substitute(dictionaryPart[0], ".txt", "", "")
-    silent! 0,$d
+    silent! %delete
     silent! exe "read ". dictionaryPart[0]
     silent! 0d
     source MdxSourceBuilderCore.vim
-    silent! 0,$d
+    silent! %delete
 endfor
+" 多层次词条
+if s:multiLevel == 1
+    for multiFile in g:multiLevelParts[0]
+        echomsg "正在处理：" . substitute(multiFile[0], ".txt", "", "")
+    endfor
+    silent! %delete
+    source MdxSourceBuilderMultiLevel.vim
+    silent! %delete
+endif
 
 echomsg "正在生成 MdxSource 文件……"
-let @x = g:mdxSource
-silent! $put x
+silent! %delete
+silent! call append('$', g:mdxSource)
 
 silent! global/^$/d
 silent! write!
