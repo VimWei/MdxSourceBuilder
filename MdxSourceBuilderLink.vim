@@ -206,6 +206,28 @@ elseif s:sourceStyle == 107
                 \. '<link rel="stylesheet" type="text\/css" href="'
                 \. s:CSSName
                 \. '" \/>\r\0/e'
+elseif s:sourceStyle == 109
+    " 基于888改造：主词条为页码
+    silent! g/^\s*"/d
+    silent! global/^$/d
+    silent! set expandtab tabstop=4 | %retab
+    silent! w!
+    let lineDicts = {}
+    let lineNumber = 0
+    for line in getline(1,'$')
+        let lineDicts[lineNumber] = split(line, '\s\{4,}')
+        let lineNumber += 1
+    endfor
+    silent! %delete
+    for line in range(lineNumber)
+        let lineList = lineDicts[line]
+        for dictKeyword in lineList[1:]
+            silent! let s:atLink = [dictKeyword
+                        \, '@@@LINK=' . s:pagePrefix . lineList[0]
+                        \, '</>']
+            silent! call append('$', s:atLink)
+        endfor
+    endfor
 elseif s:sourceStyle == 888
     " 适用于快速手工添加链接词条
     " 词条格式：现有关键词\t链接词条1\t链接词条2\t链接词条3
