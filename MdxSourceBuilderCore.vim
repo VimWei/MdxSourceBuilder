@@ -90,6 +90,7 @@ function! StandardizeStyle(sourceStyle)
     endif
     " 清理并保存，以便后续代码可以正常运作
     silent! normal! Go
+    silent! %s/?/？/g
     silent! global/^$/d
     silent! w!
 endfunction
@@ -282,9 +283,17 @@ function! KeywordsNav(currentPage, currentWord)
         endwhile
         if len(s:keywordsDict[nearestPrePage]) > 0
             let nearestPreKeyword = s:keywordsDict[nearestPrePage][-1]
-            let nearestPreKeyword = '<a class="keywordsNavKeyword" '
-                            \. 'href="entry://' . nearestPreKeyword . '">'
-                            \. '<<<</a>'
+            if nearestKeyword == 0
+                let nearestPreKeyword = ''
+            elseif nearestKeyword == 1
+                let nearestPreKeyword = '<a class="nearestKeyword" '
+                                \. 'href="entry://' . nearestPreKeyword . '">'
+                                \. '<<<</a>'
+            elseif nearestKeyword == 2
+                let nearestPreKeyword = '<a class="nearestKeyword" '
+                                \. 'href="entry://' . nearestPreKeyword . '">'
+                                \. '(' . nearestPreKeyword. ')<<<</a>'
+            endif
         else
             let nearestPreKeyword = ''
         endif
@@ -306,9 +315,17 @@ function! KeywordsNav(currentPage, currentWord)
         endwhile
         if len(s:keywordsDict[nearestNextPage]) > 0
             let nearestNextKeyword = s:keywordsDict[nearestNextPage][0]
-            let nearestNextKeyword = '<a class="keywordsNavKeyword" '
-                            \. 'href="entry://' . nearestNextKeyword . '">'
-                            \. '>>></a>'
+            if nearestKeyword == 0
+                let nearestNextKeyword = ''
+            elseif nearestKeyword == 1
+                let nearestNextKeyword = '<a class="nearestKeyword" '
+                                \. 'href="entry://' . nearestNextKeyword . '">'
+                                \. '>>></a>'
+            elseif nearestKeyword == 2
+                let nearestNextKeyword = '<a class="nearestKeyword" '
+                                \. 'href="entry://' . nearestNextKeyword . '">'
+                                \. '>>>(' . nearestNextKeyword. ')</a>'
+            endif
         else
             let nearestNextKeyword = ''
         endif
@@ -316,15 +333,9 @@ function! KeywordsNav(currentPage, currentWord)
         let nearestNextKeyword = ''
     endif
     " //////拼接导航词条
-    if s:nearestKeyword == 1
-        let keywordsNav = '<div class="keywordsNav">'
-                        \. nearestPreKeyword . keywordsNav . nearestNextKeyword
-                        \. '</div>'
-    else
-        let keywordsNav = '<div class="keywordsNav">'
-                        \. keywordsNav
-                        \. '</div>'
-    endif
+    let keywordsNav = '<div class="keywordsNav">'
+                    \. nearestPreKeyword . keywordsNav . nearestNextKeyword
+                    \. '</div>'
     return keywordsNav
 endfunction
 

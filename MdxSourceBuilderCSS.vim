@@ -50,6 +50,10 @@
     padding: 0;
 }
 
+a.nearestKeyword {
+    color: hotpink;
+}
+
 /* 多级关键词导航 */
 .keywordsNav0 {
     /* display:none */

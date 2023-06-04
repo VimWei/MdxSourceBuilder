@@ -85,6 +85,7 @@ function! StandardizeStyle(sourceStyle)
     endif
     " 清理并保存，以便后续代码可以正常运作
     silent! normal! Go
+    silent! %s/?/？/g
     silent! global/^$/d
     silent! w!
 endfunction
@@ -210,6 +211,7 @@ elseif s:sourceStyle == 109
     " 基于888改造：主词条为页码
     silent! g/^\s*"/d
     silent! global/^$/d
+    silent! %s/?/？/g
     silent! set expandtab tabstop=4 | %retab
     silent! w!
     let lineDicts = {}
@@ -235,9 +237,10 @@ elseif s:sourceStyle == 888
     " 可以添加注释行：与VimL一样，以 " 开头
     " 可以添加空行
     " ///////////////
-    " 清理数据：删除注释行、空行、Tab转空格
+    " 清理数据：删除注释行、空行、问号中文化、Tab转空格
     silent! g/^\s*"/d
     silent! global/^$/d
+    silent! %s/?/？/g
     silent! set expandtab tabstop=4 | %retab
     silent! w!
     let lineDicts = {}
