@@ -5,6 +5,7 @@ let s:customNavList = g:customNavList
 let s:picNamePrefix = g:multiLevelParts[1]
 let s:picFormat = g:multiLevelParts[2]
 let s:navStyle =  g:multiLevelParts[3]
+let s:pageNavWidth = g:pageNavWidth
 
 " 初始化及通用函数定义 ----------------------------------------------------{{{1
 " 清理并保存，以便后续代码可以正常运作
@@ -238,13 +239,21 @@ function! PagesNav(currentPage, picNamePrefix)
     if cidx > firstidx
         let pagesNav = firstPage
     endif
-    if cidx-4 > firstidx
-        let pagesNav = pagesNav . ' ... '
-    elseif cidx != firstidx
-        let pagesNav = pagesNav . ', '
-    endif
-    if cidx-3 > firstidx
-        let pagesNav = pagesNav . previous3Page . ', '
+    if s:pageNavWidth  == 0
+        if cidx-3 > firstidx
+            let pagesNav = pagesNav . ' ... '
+        elseif cidx != firstidx
+            let pagesNav = pagesNav . ', '
+        endif
+    elseif s:pageNavWidth  == 1
+        if cidx-4 > firstidx
+            let pagesNav = pagesNav . ' ... '
+        elseif cidx != firstidx
+            let pagesNav = pagesNav . ', '
+        endif
+        if cidx-3 > firstidx
+            let pagesNav = pagesNav . previous3Page . ', '
+        endif
     endif
     if cidx-2 > firstidx
         let pagesNav = pagesNav . previous2Page . ', '
@@ -259,13 +268,21 @@ function! PagesNav(currentPage, picNamePrefix)
     if cidx+2 < lastidx
         let pagesNav = pagesNav . ', ' . next2Page
     endif
-    if cidx+3 < lastidx
-        let pagesNav = pagesNav . ', ' . next3Page
-    endif
-    if cidx+4 < lastidx
-        let pagesNav = pagesNav . ' ... '
-    elseif cidx != lastidx
-        let pagesNav = pagesNav . ', '
+    if s:pageNavWidth  == 0
+        if cidx+3 < lastidx
+            let pagesNav = pagesNav . ' ... '
+        elseif cidx != lastidx
+            let pagesNav = pagesNav . ', '
+        endif
+    elseif s:pageNavWidth  == 1
+        if cidx+3 < lastidx
+            let pagesNav = pagesNav . ', ' . next3Page
+        endif
+        if cidx+4 < lastidx
+            let pagesNav = pagesNav . ' ... '
+        elseif cidx != lastidx
+            let pagesNav = pagesNav . ', '
+        endif
     endif
     if cidx < lastidx
         let pagesNav = pagesNav . lastPage

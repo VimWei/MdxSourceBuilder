@@ -52,6 +52,7 @@
 
 a.nearestKeyword {
     color: hotpink;
+    text-decoration: none;
 }
 
 /* 多级关键词导航 */

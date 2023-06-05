@@ -50,17 +50,44 @@
     padding: 0;
 }
 
+a.nearestKeyword {
+    color: hotpink;
+    text-decoration: none;
+}
+
+/* 多级关键词导航 */
+.keywordsNav0 {
+    /* display:none */
+}
+.keywordsNav1 {
+    /* display:none */
+}
+.keywordsNav2 {
+    /* display:none */
+}
+.keywordsNav3 {
+    /* display:none */
+}
+.keywordsNav4 {
+    /* display:none */
+}
+.keywordsNav5 {
+    /* display:none */
+}
+
 /* 正文图片 */
 .mainbodyimg img {
-    /* 设置图片大小 */
+    /* 自适应屏幕宽度 */
     width: 100%;
+
+    /* 按需设定固定宽度 */
     /* width: 42em; */
     /* display: block; */
     /* margin-left: auto; */
     /* margin-right: auto; */
 
     /* 对于透明图片的词典，可更改背景色以适应黑夜模式 */
-    /* 取消以下background-color的注释，并挑选您喜欢的颜色 https://encycolorpedia.cn/named */
+    /* 挑选喜欢的颜色 https://encycolorpedia.cn/named */
     /* background-color: linen; */
 }
 

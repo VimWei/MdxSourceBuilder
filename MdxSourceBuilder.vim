@@ -29,13 +29,18 @@ let g:CSSName = "MarsDict.css"
 " 词条/图片名等的页码位数，默认为4，支持3及以上
 let g:pageNumDigit = 4
 
+" pages导航的页码数量
+" 0-适合手机等窄屏幕，中间连续5个页码
+" 1-适合电脑等大屏幕，中间连续7个页码
+let g:pageNavWidth = 0
+
 " 词典模块及其配置信息，格式如下：
 " \[dictionaryPart, picNamePrefix, picFormat,
 " \sourceStyle, navStyle, locationPercent, nearestKeyword],
 let g:dictionaryParts = [
         \["火星词典.Cover.txt", "MarsDictCover_", ".png", 0, 2, 0, 1],
         \["火星词典.Prefix.txt", "MarsDictPrefix_", ".png", 0, 2, 0, 1],
-        \["火星词典.Body.Part1.txt", "MarsDict_", ".png", 0, 2, 1, 1],
+        \["火星词典.Body.Part1.txt", "MarsDict_", ".png", 0, 2, 1, 2],
         \["火星词典.Body.Part2.txt", "MarsDict_", ".png", 1, 2, 1, 1],
         \["火星词典.Body.Part3.txt", "MarsDict_", ".png", 3, 2, 1, 1],
         \["火星词典.Appendix.txt", "MarsDictAppendix_", ".png", 0, 1, 0, 1],
