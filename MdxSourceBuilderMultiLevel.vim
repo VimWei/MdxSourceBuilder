@@ -432,7 +432,7 @@ if MultiSourceStyle([0,1,2,3]) == 1
     silent! %delete
     " 将标准化词条转为标准的mdx源文件格式
     if s:navStyle == 0
-        " 自身没有页面和keywords导航，仅转LINK
+        " 自身没有pages和keywords导航，仅转LINK
         for currentPage in s:pageList
             for file in keys(s:fileKeywordsDict)
                 for currentKeyword in get(s:fileKeywordsDict[file],currentPage,[])
@@ -445,7 +445,7 @@ if MultiSourceStyle([0,1,2,3]) == 1
             endfor
         endfor
     elseif s:navStyle == 1
-        " 仅有页面导航，无keywords导航，简洁
+        " 仅有pages导航，无keywords导航，简洁
         for currentPage in s:pageList
             silent! let s:navStyleOne = [s:picNamePrefix
                 \. printf(s:pageNumDigit, currentPage)
@@ -473,7 +473,7 @@ if MultiSourceStyle([0,1,2,3]) == 1
             endfor
         endfor
     elseif s:navStyle == 2
-        " 不仅有页面导航，而且有keywords导航
+        " 不仅有pages导航，而且有keywords导航
         for currentPage in s:pageList
             silent! let s:navStyleTwo = [s:picNamePrefix
                 \. printf(s:pageNumDigit, currentPage)
@@ -508,6 +508,38 @@ if MultiSourceStyle([0,1,2,3]) == 1
                         \. "</div>"
                         \, '</>']
                     silent! call append('$', s:navStyleOne)
+                endfor
+            endfor
+        endfor
+    elseif s:navStyle == 3
+        " 不仅有pages导航，而且有keywords导航
+        " 但keyword其实仅简单@@@Link到相应page
+        " 因此，keyword导航的LocationPercent等失效
+        " 而好处是，keyword与page共用代码，简洁
+        for currentPage in s:pageList
+            silent! let s:navStyleTwo = [s:picNamePrefix
+                \. printf(s:pageNumDigit, currentPage)
+                \, '<link rel="stylesheet" type="text/css" href="' . s:CSSName . '" />'
+                \. '<div class="NavTop">'
+                \. CustomNav(s:customNavList)
+                \. PagesNav(currentPage, s:picNamePrefix)
+                \. KeywordsNav(currentPage, "")
+                \. '</div>'
+                \. '<div class="mainbodyimg"><img src="' . s:picNamePrefix
+                \. printf(s:pageNumDigit, currentPage)
+                \. s:picFormat . '" /></div>'
+                \. '<div class="NavBottom">'
+                \. PagesNav(currentPage, s:picNamePrefix)
+                \. "</div>"
+                \, '</>']
+            silent! call append('$', s:navStyleTwo)
+            for file in keys(s:fileKeywordsDict)
+                for currentKeyword in get(s:fileKeywordsDict[file],currentPage,[])
+                    silent! let s:navStyleZero = [currentKeyword
+                        \, '@@@LINK=' . s:picNamePrefix
+                        \. printf(s:pageNumDigit, currentPage)
+                        \, '</>']
+                    silent! call append('$', s:navStyleZero)
                 endfor
             endfor
         endfor

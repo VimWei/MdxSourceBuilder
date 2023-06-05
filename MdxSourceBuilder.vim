@@ -50,9 +50,10 @@ let g:dictionaryParts = [
 " - 2：'页码 + 分隔符 + 单个中或英关键词'的啰嗦行格式，跳转至页码
 " - 3：'单个中或英关键词 + 分隔符 + 页码'的啰嗦行格式，跳转至页码
 " navStyle：定义个性化的词条导航样式（MdxSourceBuilderCore.Vim）
-" - 0：自身没有页面和keywords导航，仅转LINK，适用于拼音之类的辅助检索
-" - 1：仅有页面导航，无keywords导航，简洁，适用于封面/附录之类的Affix
-" - 2：不仅有页面导航，而且有keywords导航，适用于每页关键词很多的正文
+" - 0：自身没有pages和keywords导航，仅转LINK，适用于拼音之类的辅助检索
+" - 1：仅有pages导航，无keywords导航，简洁，适用于封面/附录之类的Affix
+" - 2：不仅有pages导航，而且有keywords导航，适用于每页关键词很多的正文
+" - 3: 有pages+keywords导航，但keyword仅简单@@@Link到相应page
 " locationPercent：词条导航是否显示百分比定位信息
 " - 0：不显示百分比定位信息
 " - 1：显示百分比定位信息
